@@ -64,7 +64,7 @@ def tailor_cv(master_text: str, job: dict) -> tuple[str, dict]:
     out.append("## Technical Skills")
     for l in skill_lines:
         head, _, items = l.partition(":")
-        parts = [p.strip() for p in items.split(",") if p.strip()]
+        parts = [p.strip() for p in re.split(r",(?![^()]*\))", items) if p.strip()]
         parts.sort(key=lambda p: -_hits(p, jd_sk, jd_w))
         out.append(f"- **{head.strip()}:** {', '.join(parts)}")
     out.append("")
@@ -87,6 +87,19 @@ def tailor_cv(master_text: str, job: dict) -> tuple[str, dict]:
         elif line.strip().startswith("- "):
             bullets.append(line.strip()[2:])
     flush()
+
+    projects, cur = [], None
+    for line in sec.get("Key Projects", []):
+        if line.startswith("### "):
+            cur = [line[4:].strip(), []]
+            projects.append(cur)
+        elif cur and line.strip().startswith("- "):
+            cur[1].append(line.strip()[2:])
+    projects.sort(key=lambda p: -_hits(p[0] + " " + " ".join(p[1]), jd_sk, jd_w))
+    if projects:
+        out.append("## Key Projects")
+        for ptitle, pb in projects[:4]:
+            out += [f"### {ptitle}", *[f"- {b}" for b in pb], ""]
 
     for name in ("Certifications", "Education"):
         items = [l.strip() for l in sec.get(name, []) if l.strip()]
@@ -116,7 +129,7 @@ def cover_letter(job: dict, profile: dict, matching: list) -> str:
     certs = ", ".join(profile["certifications"])
     return f"""Dear Hiring Team at {job['company']},
 
-I am applying for the {job['title']} position{(' in ' + job['location']) if job.get('location') else ''}. I have {profile['years_experience']}+ years in routing, switching and network security, and I am based in {profile['location'].split(',')[0]} and available {profile['notice_period'].lower()}.
+I am applying for the {job['title']} position{(' in ' + job['location']) if job.get('location') else ''}. I have {profile['years_experience']}+ years in routing, switching and network security, and I am based in {profile['location'].split(',')[0]} and available {'immediately' if profile['notice_period'].lower().startswith('immediate') else 'with ' + profile['notice_period'] + ' notice'}.
 
 Your description calls for {skill_txt}. That is the core of my day-to-day work: I have implemented, migrated and troubleshot enterprise networks across healthcare, government, oil & gas and critical-infrastructure environments, with hands-on Cisco, Fortinet and Palo Alto security platforms.
 

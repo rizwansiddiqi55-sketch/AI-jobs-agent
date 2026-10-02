@@ -55,6 +55,14 @@ class Matching(unittest.TestCase):
         m = matcher.score({**GOOD, "description": GOOD["description"] + "\nCCIE required"}, PROFILE)
         self.assertTrue(any("CCIE" in c for c in m.concerns))
 
+    def test_dc_core_is_not_full_ccnp_dc(self):
+        m = matcher.score({**GOOD, "description": "CCNP Data Center required. Cisco Nexus."}, PROFILE)
+        self.assertTrue(any("CCNP Data Center" in c for c in m.concerns))
+
+    def test_nse4_covered_by_nse7(self):
+        m = matcher.score({**GOOD, "description": "NSE4 required. Fortinet firewall."}, PROFILE)
+        self.assertEqual(m.breakdown["certifications"]["points"], 10)
+
     def test_ccna_covered_by_ccnp(self):
         m = matcher.score({**GOOD, "description": "CCNA required. Cisco routing."}, PROFILE)
         self.assertEqual(m.breakdown["certifications"]["points"], 10)
@@ -109,6 +117,8 @@ class Tailoring(unittest.TestCase):
         cv, rep = tailor.tailor_cv(master, {**GOOD, "title": "SD-WAN Engineer",
                                             "description": "Fortinet SD-WAN, Terraform, Juniper"})
         self.assertIn("Fortinet SD-WAN", cv)
+        self.assertIn("## Key Projects", cv)
+        self.assertNotIn("[FILL IN", cv)
         self.assertNotIn("Juniper", cv)
         self.assertNotIn("Terraform", cv)
         self.assertIn("juniper", rep["jd_skills_not_in_cv_not_added"])
@@ -116,9 +126,15 @@ class Tailoring(unittest.TestCase):
             if line.startswith("- ") and "**" not in line:
                 self.assertIn(line[2:], master)
 
+    def test_parenthesised_commas_kept_together(self):
+        master = (ROOT / "data" / "master_cv.md").read_text()
+        cv, _ = tailor.tailor_cv(master, GOOD)
+        self.assertIn("Palo Alto NGFW (PA-800, PA-3000, VM-50, Panorama)", cv)
+
     def test_letter_has_company_and_title(self):
         t = tailor.cover_letter(GOOD, PROFILE, ["cisco", "bgp"])
         self.assertIn("Acme", t)
+        self.assertIn("available immediately", t)
         self.assertIn("Senior Network Security Engineer", t)
 
 
@@ -129,8 +145,14 @@ class Approval(unittest.TestCase):
         self.id = self.row["id"]
 
     def test_placeholders_block_final(self):
-        with self.assertRaises(RuntimeError):
-            ap.prepare(self.con, self.id)
+        mp = config.master_cv_path()
+        orig = mp.read_text()
+        mp.write_text(orig.replace("Dubai, UAE |", "[FILL IN phone] | Dubai, UAE |", 1))
+        try:
+            with self.assertRaises(RuntimeError):
+                ap.prepare(self.con, self.id)
+        finally:
+            mp.write_text(orig)
 
     def test_screening_rules(self):
         self.assertEqual(ap.answer_question("What is your notice period?", PROFILE)[1], "auto")

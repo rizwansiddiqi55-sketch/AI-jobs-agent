@@ -70,7 +70,7 @@ CERTS = {
 }
 
 # A cert the candidate is deemed to cover through a higher one he holds.
-CERT_COVERED_BY = {"CCNA": "CCNP"}
+CERT_COVERED_BY = {"CCNA": "CCNP", "Fortinet NSE4": "Fortinet NSE7"}
 
 UAE_PRIMARY = ["dubai", "abu dhabi"]
 UAE_OTHER = ["sharjah", "ajman", "ras al khaimah", "rak", "fujairah", "umm al quwain", "al ain",
@@ -85,6 +85,7 @@ INDUSTRY_KEYWORDS = {
     "government": [r"government", r"ministry", r"federal", r"authority", r"public sector"],
     "oil & gas": [r"oil", r"gas\b", r"petro", r"energy", r"adnoc", r"upstream"],
     "critical infrastructure": [r"critical infrastructure", r"utilit", r"\bot\b", r"scada", r"transport", r"aviation"],
+    "financial services": [r"\bbank", r"financ", r"fintech", r"insurance"],
     "enterprise": [r"enterprise", r"corporate", r"campus", r"data ?cent"],
 }
 

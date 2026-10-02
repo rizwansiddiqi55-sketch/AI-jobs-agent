@@ -138,8 +138,7 @@ def score(job: dict, profile: dict) -> Match:
     held = []
     for c in wanted:
         covered_by = sk.CERT_COVERED_BY.get(c)
-        if c.lower() in certs_have or (covered_by and covered_by.lower() in certs_have) \
-                or any(c.lower() in h or h in c.lower() for h in certs_have):
+        if c.lower() in certs_have or (covered_by and covered_by.lower() in certs_have):
             held.append(c)
     unmet = sorted(wanted - set(held))
     if wanted:
