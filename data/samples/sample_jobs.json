@@ -1,0 +1,7 @@
+[
+ {"company":"Example Health Group","title":"Senior Network Security Engineer","location":"Dubai, UAE","salary":"AED 22,000 - 28,000 per month","source":"sample","posted_date":"2026-10-01","url":"https://careers.example.com/jobs/101","job_ref":"101","experience_required":"8+ years",
+  "description":"Requirements:\n- 8+ years in enterprise networking and security at a hospital group\n- Cisco Catalyst switching, OSPF, BGP\n- Fortinet FortiGate and Palo Alto firewalls\n- Cisco ISE / 802.1X NAC\n- CCNP Security\nPreferred:\n- Aruba ClearPass\n- Python automation"},
+ {"company":"Junior Corp","title":"Junior Network Engineer","location":"Dubai, UAE","source":"sample","url":"https://x.example.com/2","description":"0-2 years. Basic switching and routing. CCNA."},
+ {"company":"Quick Hire","title":"Network Engineer","location":"Sharjah","source":"sample","url":"https://x.example.com/3","description":"No experience needed! Pay a registration fee of AED 500 and contact us on WhatsApp only. Send passport copy."},
+ {"company":"London Net","title":"Senior Network Engineer","location":"London, UK","source":"sample","url":"https://x.example.com/4","description":"Cisco, BGP, 7+ years. CCIE preferred."}
+]

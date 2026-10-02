@@ -1,0 +1,40 @@
+{
+  "name": "Rizwan Siddiqi",
+  "email": "rizwan.siddiqi55@gmail.com",
+  "phone": "",
+  "location": "Dubai, UAE",
+  "linkedin": "https://www.linkedin.com/in/rizwansiddiqi/",
+  "portfolio": "",
+  "years_experience": 15,
+  "current_title": "Senior Network Engineer",
+  "education": ["BS Computer Science"],
+  "certifications": ["CCNP Enterprise", "CCNP Security", "CCNP Data Center"],
+  "certifications_short": ["CCNP", "CCNP Enterprise", "CCNP Security", "CCNP Data Center"],
+  "skills": [
+    "routing", "switching", "layer 3", "ospf", "bgp", "mpls", "hsrp", "etherchannel", "stp", "sd-wan",
+    "cisco", "cisco catalyst", "cisco wlc", "cisco asa", "cisco ftd", "cisco ise", "catalyst center",
+    "fortinet", "palo alto", "aruba", "clearpass", "nac", "firewall", "network security", "vpn",
+    "wireless", "troubleshooting"
+  ],
+  "industries": ["enterprise", "healthcare", "government", "oil & gas", "critical infrastructure"],
+  "target_titles": [
+    "Senior Network Engineer", "Network Engineer", "Network Security Engineer", "Network Security Specialist",
+    "L2/L3 Network Engineer", "Network Infrastructure Engineer", "Network Operations Engineer",
+    "Firewall/Security Engineer", "SD-WAN Engineer", "Cisco Network Engineer", "Network Consultant"
+  ],
+  "preferred_locations": ["Dubai", "Abu Dhabi", "UAE", "Remote"],
+  "international_only_with_sponsorship": true,
+  "notice_period": "Immediate",
+  "salary_expectation_aed": {"min": 21000, "max": 30000, "period": "month"},
+  "disclose_current_salary": false,
+  "current_salary_aed": 16000,
+  "work_authorization": "TO CONFIRM: describe your current UAE visa status before any application",
+  "screening_answers": {
+    "notice period|availability|when can you start": "Immediate",
+    "expected salary|salary expectation": "AED 21,000 - 30,000 per month (negotiable based on package)",
+    "years of experience|how many years": "15+ years in routing, switching and network security",
+    "linkedin": "https://www.linkedin.com/in/rizwansiddiqi/",
+    "willing to relocate": "TO CONFIRM",
+    "work authori[sz]ation|visa status|right to work": "TO CONFIRM"
+  }
+}
