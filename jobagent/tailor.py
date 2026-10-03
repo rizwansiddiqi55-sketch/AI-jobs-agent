@@ -163,7 +163,8 @@ PRETTY = {"cisco": "Cisco", "fortinet": "Fortinet", "palo alto": "Palo Alto", "s
 def cover_letter(job: dict, profile: dict, matching: list, master_text: str | None = None) -> str:
     """Short factual letter. Uses only profile facts and verbatim lines from the master CV."""
     top = [m for m in PRIORITY if m in matching][:4]
-    skill_txt = ", ".join(PRETTY[t] for t in top) if top else "routing, switching and network security"
+    # Name specific technologies only when the posting clearly centres on at least two of them.
+    skill_txt = ", ".join(PRETTY[t] for t in top) if len(top) >= 2 else "enterprise network and security operations"
     avail = ("immediately" if profile["notice_period"].lower().startswith("immediate")
              else f"with {profile['notice_period']} notice")
     proj = ""

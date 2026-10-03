@@ -219,6 +219,14 @@ class Tailoring(unittest.TestCase):
         cv, _ = tailor.tailor_cv(master, GOOD)
         self.assertIn("Palo Alto NGFW (PA-800, PA-3000, VM-50, Panorama)", cv)
 
+    def test_letter_does_not_overstate_from_one_keyword(self):
+        master = (ROOT / "data" / "master_cv.md").read_text()
+        t = tailor.cover_letter(GOOD, PROFILE, ["fortinet", "switching"], master)
+        self.assertNotIn("centres on Fortinet", t)
+        self.assertIn("enterprise network and security operations", t)
+        t2 = tailor.cover_letter(GOOD, PROFILE, ["fortinet", "palo alto", "bgp"], master)
+        self.assertIn("centres on Palo Alto, Fortinet", t2)
+
     def test_letter_has_company_and_title(self):
         master = (ROOT / "data" / "master_cv.md").read_text()
         t = tailor.cover_letter(GOOD, PROFILE, ["cisco", "bgp"], master)
@@ -337,7 +345,12 @@ class EmployerApply(unittest.TestCase):
         d = ap.packet_dir(self.id)
         s = FormSession(headless=True)
         try:
-            s.open((ROOT / "tests/fixtures/apply_form.html").as_uri(), PROFILE, d, (d / "cover_letter.md").read_text())
+            try:
+                s.open((ROOT / "tests/fixtures/apply_form.html").as_uri(), PROFILE, d, (d / "cover_letter.md").read_text())
+            except Exception as e:  # no usable Chromium on this machine
+                if "Executable doesn't exist" in str(e) or "playwright install" in str(e):
+                    self.skipTest("Chromium not available (set JOBAGENT_CHROMIUM)")
+                raise
             p = s.page
             self.assertEqual(p.input_value("#fn"), "Rizwan")
             self.assertEqual(p.input_value("#ln"), "Siddiqi")
