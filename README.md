@@ -57,3 +57,10 @@ Live searching is not scraped here (LinkedIn/Indeed terms forbid it). In a Claud
 Import format: a JSON list (or CSV) with `company, title, location, salary, url, job_ref, posted_date, source, description, remote, visa_sponsorship`.
 
 Status values: New, Review Required, Ready to Apply, Applied, Assessment, Interview, Follow-up Required, Rejected, Offer, Closed.
+
+## Optional read-only dashboard on Vercel
+`site/index.html` is a static snapshot of the tracker (company, role, match, status, links; no CV, phone or email).
+It is deployed to the Vercel project `ai-jobs-dashboard` with **Vercel Authentication on for all deployments**, so only
+logged-in members of your Vercel team can open it. Refresh it with `jobagent export site/index.html`, then redeploy
+(`vercel --prod` from `site/`, or ask Claude Code to redeploy). It is a snapshot, not a live view: the agent, the
+database and the SUBMIT approval step all stay on your own computer.
