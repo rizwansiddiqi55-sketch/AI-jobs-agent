@@ -88,7 +88,11 @@ def score(job: dict, profile: dict) -> Match:
     else:
         cov, note = 0.5, "No recognisable skills in description (neutral)"
         concerns.append("Description lists no recognisable technical skills - review manually")
-    bd["technical"] = (round(cov * WEIGHTS["technical"], 1), note)
+    missing_req = sorted(req - have)
+    pts = max(0.0, cov * WEIGHTS["technical"] - 2 * len(missing_req))  # each missing required skill costs extra
+    if missing_req:
+        note += f"; -{2 * len(missing_req)} for missing required: {', '.join(missing_req)}"
+    bd["technical"] = (round(pts, 1), note)
     for m in sorted(req - have):
         concerns.append(f"Required skill not in your profile: {m}")
 
@@ -159,6 +163,11 @@ def score(job: dict, profile: dict) -> Match:
     # --- salary ---
     rng = parse_aed_monthly(job.get("salary") or "")
     lo_exp = profile["salary_expectation_aed"]["min"]
+    salary_gap = ""
+    if rng and rng[1] < 0.8 * lo_exp:
+        salary_gap = "far"
+    elif rng and rng[1] < lo_exp:
+        salary_gap = "below"
     if rng:
         if rng[1] >= lo_exp:
             bd["salary"] = (5, f"AED {rng[0]:,.0f}-{rng[1]:,.0f}/mo meets your {lo_exp:,} minimum")
@@ -168,7 +177,26 @@ def score(job: dict, profile: dict) -> Match:
     else:
         bd["salary"] = (2.5, "Salary not stated/not AED-monthly (neutral)")
 
+    sysadmin = False
+    # Informational flags (no score impact): requirements the user must judge for themselves.
+    if re.search(r"driving licen[cs]e", full, re.I):
+        concerns.append("Mentions a UAE driving licence requirement - confirm you meet it")
+    langs = re.findall(r"[^.\n]*\b(?:native|fluent|speaker|speakers)\b[^.\n]*\b(?:hindi|arabic|urdu|tagalog|french)\b[^.\n]*|[^.\n]*\b(?:hindi|arabic|urdu)\b[^.\n]*\b(?:speaker|speakers|preferred|must)\b[^.\n]*", full, re.I)
+    if langs:
+        concerns.append("Language requirement stated (your call whether to apply): " + langs[0].strip()[:80])
+    if re.search(r"pre-?sales|rfp|rfi\b", full, re.I):
+        concerns.append("Includes pre-sales/solution-architecture duties - read the JD")
+    if re.search(r"windows server|cctv|pabx", full, re.I) and not re.search(r"windows server|cctv|pabx", " ".join(profile["skills"]), re.I):
+        concerns.append("Systems/CCTV/telephony duties - may be a sysadmin role under a network title")
+        sysadmin = True
     total = round(sum(v[0] for v in bd.values()), 1)
+    if sysadmin:
+        total = min(total, 70)
+    if salary_gap == "far":
+        total = min(total, 59)
+        concerns.append("Advertised pay is far below your minimum (less than 80% of it)")
+    elif salary_gap == "below":
+        total = min(total, 79)
     flags = scam.check(full)
     if flags:
         concerns.append("Possible scam: " + "; ".join(flags))
@@ -177,16 +205,22 @@ def score(job: dict, profile: dict) -> Match:
         total = min(total, 40)  # a hard-rule failure can never look like a good match
     elif kind == "intl-nosponsor":
         total = min(total, 49)
-    rec = recommend(total, concerns, hard_skip, kind)
+    rec = recommend(total, concerns, hard_skip, kind, salary_gap, len(missing_req))
     return Match(total, {k: {"points": v[0], "max": WEIGHTS[k], "note": v[1]} for k, v in bd.items()},
                  matching, missing, sorted(wanted), concerns, rec)
 
 
-def recommend(total: float, concerns: list, hard_skip: bool, loc_kind: str) -> str:
+def recommend(total: float, concerns: list, hard_skip: bool, loc_kind: str, salary_gap: str = "", missing_req: int = 0) -> str:
     if any(c.startswith("Possible scam") for c in concerns):
         return "DO NOT APPLY - scam indicators"
     if hard_skip or loc_kind == "intl-nosponsor":
         return "SKIP - fails a hard rule (seniority or location/sponsorship)"
+    if salary_gap == "far":
+        return "SKIP - advertised pay far below your minimum"
+    if salary_gap == "below":
+        return "REVIEW - good fit but advertised pay is below your minimum; apply only if negotiable"
+    if total >= 80 and missing_req > 2:
+        return f"REVIEW - strong overall but {missing_req} required skills are missing; check you can credibly cover them"
     if total >= 80:
         return "APPLY - strong match; prepare tailored CV and cover letter"
     if total >= 65:

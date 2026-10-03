@@ -48,3 +48,13 @@ def ingest(con, jobs: list[dict]) -> dict:
         if flags:
             stats["scam_flagged"].append(f"#{row['id']} {j['company']}: {'; '.join(flags)}")
     return stats
+
+
+def rescore(con) -> int:
+    """Re-run matching for every stored job (after profile/matcher changes). Statuses are not touched."""
+    profile = load_profile()
+    rows = con.execute("SELECT * FROM jobs").fetchall()
+    for r in rows:
+        m = matcher.score({k: r[k] for k in r.keys()}, profile)
+        db.update(con, r["id"], match_pct=m.score, match_json=json.dumps(m.to_dict()))
+    return len(rows)

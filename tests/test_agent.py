@@ -71,6 +71,32 @@ class Matching(unittest.TestCase):
         m = matcher.score({**GOOD, "salary": "AED 12,000 - 15,000"}, PROFILE)
         self.assertEqual(m.breakdown["salary"]["points"], 0)
 
+    def test_far_below_salary_is_skip(self):
+        m = matcher.score({**GOOD, "salary": "AED 6,000 - 8,000 per month"}, PROFILE)
+        self.assertLessEqual(m.score, 59)
+        self.assertTrue(m.recommendation.startswith("SKIP"))
+
+    def test_slightly_below_salary_is_review_not_apply(self):
+        m = matcher.score({**GOOD, "salary": "AED 17,000 - 19,000 per month"}, PROFILE)
+        self.assertLessEqual(m.score, 79)
+        self.assertTrue(m.recommendation.startswith("REVIEW"))
+
+    def test_unheld_vendor_skills_lower_score(self):
+        d = "Requirements:\n- Cisco, BGP\n- VMware NSX, Infoblox, F5 APM, vSphere"
+        m = matcher.score({**GOOD, "description": d}, PROFILE)
+        self.assertIn("infoblox", m.missing)
+        self.assertIn("vmware nsx", m.missing)
+        self.assertLess(m.breakdown["technical"]["points"], 30)
+
+    def test_sysadmin_title_mismatch_flagged(self):
+        m = matcher.score({**GOOD, "description": "Windows Server, CCTV, PABX, firewalls, switches"}, PROFILE)
+        self.assertTrue(any("sysadmin" in c for c in m.concerns))
+
+    def test_many_missing_required_downgrades_apply(self):
+        d = "Requirements:\n- Cisco, BGP, OSPF, Fortinet, Palo Alto, Infoblox, VMware NSX, vSphere"
+        m = matcher.score({**GOOD, "description": d, "salary": ""}, PROFILE)
+        self.assertTrue(m.recommendation.startswith("REVIEW"))
+
     def test_scam_capped(self):
         m = matcher.score({**GOOD, "description": "Pay a registration fee. WhatsApp only."}, PROFILE)
         self.assertLessEqual(m.score, 20)

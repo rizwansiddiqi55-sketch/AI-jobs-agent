@@ -22,6 +22,10 @@ def cmd_import(a, con):
         print("  SCAM WARNING:", f)
 
 
+def cmd_rescore(a, con):
+    print(f"Re-scored {importer.rescore(con)} jobs")
+
+
 def cmd_add(a, con):
     desc = Path(a.description_file).read_text(encoding="utf-8") if a.description_file else ""
     job = dict(company=a.company, title=a.title, location=a.location, url=a.url, salary=a.salary or "",
@@ -129,6 +133,7 @@ def build_parser():
     p = argparse.ArgumentParser(prog="jobagent", description=__doc__)
     sp = p.add_subparsers(dest="cmd", required=True)
     s = sp.add_parser("import", help="import jobs from JSON/CSV"); s.add_argument("file"); s.set_defaults(f=cmd_import)
+    s = sp.add_parser("rescore", help="re-run matching on all stored jobs"); s.set_defaults(f=cmd_rescore)
     s = sp.add_parser("add", help="add one job manually")
     for n in ("company", "title"):
         s.add_argument(n)
