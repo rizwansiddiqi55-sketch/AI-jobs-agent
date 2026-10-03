@@ -15,7 +15,7 @@ else
   python -m pip install --quiet -e .
 fi
 python -m unittest discover -s tests
-python -m jobagent import data/inbox/2026-10-03_indeed_bayt.json || true
+for f in data/inbox/*.json; do python -m jobagent import "$f" || true; done
 echo
 python -m jobagent doctor || true
 cat <<MSG

@@ -12,7 +12,7 @@ if "%1"=="--browser" (
   python -m pip install --quiet -e . || exit /b 1
 )
 python -m unittest discover -s tests
-python -m jobagent import data\inbox\2026-10-03_indeed_bayt.json
+for %%f in (data\inbox\*.json) do python -m jobagent import "%%f"
 python -m jobagent doctor
 echo.
 echo Installed. Each time you open a terminal:

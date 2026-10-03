@@ -201,13 +201,27 @@ class Tailoring(unittest.TestCase):
             if line.startswith("- ") and "**" not in line:
                 self.assertIn(line[2:], master)
 
+    def test_ise_job_surfaces_takreer_project_and_letter_quotes_cv(self):
+        master = (ROOT / "data" / "master_cv.md").read_text()
+        job = {**GOOD, "title": "Network & Security Engineer",
+               "description": "Cisco ISE, 802.1X, MAB, TACACS+ NAC deployment. Cisco ASA, Firepower."}
+        cv, _ = tailor.tailor_cv(master, job)
+        self.assertIn("TAKREER", cv)
+        title, bullet = tailor.best_project(master, job)
+        self.assertIn("TAKREER", title)
+        self.assertIn(bullet, master)  # verbatim from master, nothing invented
+        letter = tailor.cover_letter(job, PROFILE, ["cisco ise", "nac"], master)
+        self.assertIn("TAKREER", letter)
+        self.assertIn("new UAE work visa", letter)
+
     def test_parenthesised_commas_kept_together(self):
         master = (ROOT / "data" / "master_cv.md").read_text()
         cv, _ = tailor.tailor_cv(master, GOOD)
         self.assertIn("Palo Alto NGFW (PA-800, PA-3000, VM-50, Panorama)", cv)
 
     def test_letter_has_company_and_title(self):
-        t = tailor.cover_letter(GOOD, PROFILE, ["cisco", "bgp"])
+        master = (ROOT / "data" / "master_cv.md").read_text()
+        t = tailor.cover_letter(GOOD, PROFILE, ["cisco", "bgp"], master)
         self.assertIn("Acme", t)
         self.assertIn("available immediately", t)
         self.assertIn("Senior Network Security Engineer", t)

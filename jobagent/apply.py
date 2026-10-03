@@ -59,7 +59,7 @@ def prepare(con, job_id: int, questions: list[str] | None = None, draft: bool = 
         raise RuntimeError(
             "Master CV still has [FILL IN] placeholders: "
             f"{report['placeholders_remaining']}. Complete data/master_cv.md (or pass --draft).")
-    letter = tailor.cover_letter(job, profile, m.matching)
+    letter = tailor.cover_letter(job, profile, m.matching, master)
 
     qa = [dict(question=q, **dict(zip(("answer", "status"), answer_question(q, profile)))) for q in questions or []]
     d = packet_dir(job_id)
