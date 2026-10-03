@@ -105,7 +105,7 @@ textarea { min-height: 150px; resize: vertical; }
 <script>
 (function () {
   "use strict";
-  var state = { db: null, sample: null, jobs: [], me: null, tab: "todo", open: {}, showSkip: false, ready: false, dbMissing: false };
+  var state = { db: null, sample: null, jobs: [], me: null, tab: "todo", open: {}, showSkip: false, ready: false, dbMissing: false, editMe: false };
   var $ = function (s) { return document.querySelector(s); };
 
   function h(tag, attrs) {
@@ -144,6 +144,25 @@ textarea { min-height: 150px; resize: vertical; }
     catch (e) { fallback(); }
   }
 
+  /* Prepared letters and CV text were written with the details you had at the time; show your current ones. */
+  function fixText(t) {
+    var me = state.me;
+    if (!t || !me || !me.orig) return t;
+    var o = me.orig;
+    function rep(s, a, b) { return a && b && a !== b ? s.split(a).join(b) : s; }
+    function bare(u) { return String(u || "").replace(/^https?:\/\//i, ""); }
+    t = rep(t, o.linkedin, me.linkedin);
+    t = rep(t, bare(o.linkedin), bare(me.linkedin));
+    t = rep(t, o.phone, me.phone);
+    t = rep(t, o.email, me.email);
+    t = rep(t, o.name, me.name);
+    t = rep(t, String(o.name || "").toUpperCase(), String(me.name || "").toUpperCase());
+    return t;
+  }
+  function getAnswers(j) {
+    return state.me && state.me.answers && state.me.answers.length ? state.me.answers : ((j.kit && j.kit.answers) || []);
+  }
+
   function safeUrl(u) { return /^https:\/\//i.test(u || "") ? u : ""; }
   var BOARDS = [["linkedin.com", "LinkedIn"], ["indeed.com", "Indeed"], ["bayt.com", "Bayt"], ["glassdoor.com", "Glassdoor"],
     ["gulftalent.com", "GulfTalent"], ["naukri", "Naukrigulf"]];
@@ -180,7 +199,7 @@ textarea { min-height: 150px; resize: vertical; }
     var counts = { todo: state.jobs.filter(isOpen).length, applied: state.jobs.filter(function (j) { return j.status === "Applied"; }).length };
     var nav = $("#tabs"); nav.textContent = "";
     TABS.forEach(function (t) {
-      var b = h("button", { role: "tab", "aria-selected": String(state.tab === t[0]), onclick: function () { state.tab = t[0]; render(); window.scrollTo(0, 0); } }, t[1]);
+      var b = h("button", { role: "tab", "aria-selected": String(state.tab === t[0]), onclick: function () { if (state.tab === "me" && t[0] !== "me") { state.meFormUp = false; } state.tab = t[0]; render(); window.scrollTo(0, 0); } }, t[1]);
       if (counts[t[0]] != null) b.append(h("span", { class: "n" }, counts[t[0]]));
       nav.append(b);
     });
@@ -240,9 +259,9 @@ textarea { min-height: 150px; resize: vertical; }
     if (j.missing && j.missing.length) d.append(h("div", null, h("div", { class: "tag warn", style: "margin-bottom:6px" }, "Not on your CV (not claimed)"),
       h("div", { class: "chips miss" }, j.missing.map(function (m) { return h("span", null, m); }))));
     if (kit) {
-      d.append(copyBlock("Cover letter", kit.coverLetter, "cover letter", true));
-      d.append(answersBlock(kit.answers || []));
-      d.append(copyBlock("Tailored CV (text)", kit.cv, "CV text", false));
+      d.append(copyBlock("Cover letter", fixText(kit.coverLetter), "cover letter", true));
+      d.append(answersBlock(getAnswers(j)));
+      d.append(copyBlock("Tailored CV (text)", fixText(kit.cv), "CV text", false));
     } else if (j.estimate) {
       /* pasted job: kit saved under j.kit when created */
     } else {
@@ -295,9 +314,18 @@ textarea { min-height: 150px; resize: vertical; }
     main.append(list);
   }
 
+  var ME_FIELDS = [["name", "Name", "text"], ["email", "Email", "email"], ["phone", "Phone", "tel"], ["location", "Location", "text"],
+    ["linkedin", "LinkedIn", "url"], ["notice", "Notice period", "text"], ["salary", "Expected salary (as written on forms)", "text"],
+    ["salaryMin", "Minimum salary, AED per month", "number"], ["workAuth", "Work authorisation", "area"], ["relocation", "Relocation", "area"],
+    ["certifications", "Certifications (one per line)", "lines"], ["expired", "Expired certifications, not claimed (one per line)", "lines"],
+    ["education", "Education (one per line)", "lines"]];
+
   function renderMe(main) {
     var me = state.me;
     if (!me) { main.append(emptyState(state.ready ? "Details not loaded" : "Loading", state.ready ? "Ask Claude to refresh your kit." : "One moment.")); return; }
+    if (state.editMe) { renderMeEdit(main, me); return; }
+    var top = h("div", { class: "actions" }, h("button", { class: "btn primary", onclick: function () { state.editMe = true; state.meFormUp = false; render(); window.scrollTo(0, 0); } }, "Edit details"));
+    main.append(top);
     var rows = [["Name", me.name], ["Email", me.email], ["Phone", me.phone], ["Location", me.location], ["LinkedIn", me.linkedin],
       ["Notice period", me.notice], ["Expected salary", me.salary], ["Work authorisation", me.workAuth], ["Relocation", me.relocation],
       ["Certifications", (me.certifications || []).join(", ")], ["Education", (me.education || []).join(", ")]];
@@ -309,6 +337,52 @@ textarea { min-height: 150px; resize: vertical; }
     });
     main.append(blk);
     if ((me.expired || []).length) main.append(h("p", { class: "note" }, "Expired and not claimed: " + me.expired.join(", ") + "."));
+    main.append(h("p", { class: "note" }, "Screening answers used in every job kit are edited under Edit details. Changes here apply on this phone page only."));
+  }
+
+  function renderMeEdit(main, me) {
+    var inputs = {}, ansInputs = [];
+    var form = h("form", { class: "check", novalidate: true });
+    form.append(h("p", { class: "note" }, "Edit anything below. New contact details also replace the old ones in every prepared cover letter and CV text on this page."));
+    ME_FIELDS.forEach(function (f) {
+      var key = f[0], val = me[key];
+      var el;
+      if (f[2] === "area" || f[2] === "lines") el = h("textarea", { id: "me-" + key, style: "min-height:" + (f[2] === "lines" ? "84px" : "96px") });
+      else el = h("input", { id: "me-" + key, type: f[2], autocomplete: "off" });
+      el.value = f[2] === "lines" ? (val || []).join("\n") : (val == null ? "" : val);
+      inputs[key] = el;
+      form.append(h("label", null, f[1], el));
+    });
+    form.append(h("div", { class: "tag", style: "margin-top:6px" }, "Screening answers copied into forms"));
+    (me.answers || []).forEach(function (a, i) {
+      if (a.needs) { form.append(h("div", { class: "qa", style: "border:1px solid var(--line);border-radius:8px" }, h("div", { class: "q" }, a.q), h("div", { class: "a warn" }, a.needs))); ansInputs[i] = null; return; }
+      var ta = h("textarea", { id: "me-ans-" + i, style: "min-height:72px" }); ta.value = a.a || ""; ansInputs[i] = ta;
+      form.append(h("label", null, a.q, ta));
+    });
+    var save = h("button", { class: "btn primary", type: "submit" }, "Save changes");
+    var cancel = h("button", { class: "btn", type: "button", onclick: function () { state.editMe = false; state.meFormUp = false; render(); } }, "Cancel");
+    form.append(h("div", { class: "actions" }, save, cancel));
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var v = {};
+      ME_FIELDS.forEach(function (f) {
+        var raw = inputs[f[0]].value;
+        v[f[0]] = f[2] === "lines" ? raw.split("\n").map(function (s) { return s.trim(); }).filter(Boolean)
+                : f[2] === "number" ? (Number(raw) > 0 ? Number(raw) : me.salaryMin) : raw.trim();
+      });
+      if (!v.name) { toast("Name can't be empty"); return; }
+      if (v.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v.email)) { toast("Check the email address"); return; }
+      if (v.linkedin && !/^https?:\/\//i.test(v.linkedin)) v.linkedin = "https://" + v.linkedin;
+      var answers = (me.answers || []).map(function (a, i) { return ansInputs[i] ? { q: a.q, a: ansInputs[i].value.trim(), needs: "" } : a; });
+      var patch = v; patch.answers = answers;
+      if (!me.orig) patch.orig = { name: me.name, email: me.email, phone: me.phone, linkedin: me.linkedin };
+      if (!state.db) { toast("Sign in to Claude to save"); return; }
+      save.disabled = true;
+      state.db.doc("profile/me").update(patch).then(function () { state.editMe = false; state.meFormUp = false; toast("Details saved"); render(); },
+        function () { save.disabled = false; toast("Could not save, try again"); });
+    });
+    state.meFormUp = true;
+    main.append(form);
   }
 
   /* ---------- check a pasted job (LinkedIn etc.) ---------- */
@@ -336,7 +410,7 @@ textarea { min-height: 150px; resize: vertical; }
         "CCNP Data Center is only the Core exam. Minimum salary expectation is AED " + me.salaryMin + " per month. Target: senior network and network-security roles, UAE first.\n" +
         "Cover letter: under 150 words, plain language, names the exact role and company, mentions one relevant project from the CV, says in one sentence that a new UAE work visa would need to be sponsored, no clichés.\n" +
         "Reply with only JSON: {\"match\": number 0-100, \"recommendation\": \"APPLY\"|\"REVIEW\"|\"SKIP\", \"matching\": [strings], \"missing\": [strings], \"concerns\": [strings], \"cover_letter\": string}\n\n" +
-        "CANDIDATE CV:\n" + me.cvMaster + "\n\nJOB\nCompany: " + company.value + "\nTitle: " + title.value + "\nDescription:\n" + text.value.slice(0, 12000);
+        "CANDIDATE CV:\n" + fixText(me.cvMaster) + "\n\nJOB\nCompany: " + company.value + "\nTitle: " + title.value + "\nDescription:\n" + text.value.slice(0, 12000);
       state.sample.json(prompt, { modelTier: "default" }).then(function (r) {
         lastResult = r; out.textContent = "";
         var cls = recClass(r.recommendation);
@@ -353,7 +427,7 @@ textarea { min-height: 150px; resize: vertical; }
           var doc = { id: id, company: company.value || "Unknown company", title: title.value || "Job", location: "", salary: "", experience: "", match: Math.round(Number(r.match) || 0),
             status: "New", source: /linkedin/i.test(link.value) ? "LinkedIn (pasted)" : "Pasted", posted: "", url: safeUrl(link.value.trim()), applyUrl: "", appliedOn: "", followUp: "",
             recommendation: String(r.recommendation || "REVIEW"), concerns: (r.concerns || []).map(String), matching: (r.matching || []).map(String), missing: (r.missing || []).map(String),
-            estimate: true, kit: { coverLetter: String(r.cover_letter || ""), cv: me.cvMaster, answers: me.answers || [] } };
+            estimate: true, kit: { coverLetter: String(r.cover_letter || ""), cv: fixText(me.cvMaster), answers: me.answers || [] } };
           saveBtn.disabled = true;
           state.db.doc("jobs/job_" + id).set(doc).then(function () { toast("Saved to To apply"); state.tab = "todo"; state.open[id] = true; render(); },
             function () { saveBtn.disabled = false; toast("Could not save, try again"); });
@@ -377,6 +451,7 @@ textarea { min-height: 150px; resize: vertical; }
     renderTabs();
     var main = $("#main");
     if (state.tab === "check" && checkUI && main.contains(checkUI.form)) { return; } /* keep typed text */
+    if (state.tab === "me" && state.editMe && main.querySelector("form.check") && state.meFormUp) { return; }
     main.textContent = "";
     if (state.dbMissing) { main.append(emptyState("Sign in to see your jobs", "Open this page from your Claude account so it can load your tracker.")); }
     if (state.tab === "todo") renderTodo(main);

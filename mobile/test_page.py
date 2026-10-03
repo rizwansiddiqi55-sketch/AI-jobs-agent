@@ -16,6 +16,7 @@ MOCK = """
   store.profile.me = SEED.profile;
   const snapDoc = (id, data) => ({id, exists: data !== undefined, data: () => data});
   const notify = () => subs.forEach(f => f());
+  window.__notify = notify;
   const docRef = path => { const [c, id] = path.split('/'); return {
     get: async () => snapDoc(id, store[c][id]),
     set: async d => { store[c][id] = JSON.parse(JSON.stringify(d)); notify(); },
@@ -102,6 +103,42 @@ with sync_playwright() as p:
     saved = [j for j in page.evaluate("Object.values(window.__store.jobs)") if j["company"] == "Acme Networks"]
     check("pasted job saved as LinkedIn", saved and saved[0]["source"] == "LinkedIn (pasted)" and saved[0]["url"].startswith("https://www.linkedin.com"))
     check("saved job visible in To apply", "Acme Networks" in page.locator("#main").inner_text())
+    # edit details
+    page.locator("nav button", has_text="Me").click()
+    page.locator("button", has_text="Edit details").click()
+    check("edit form shown", page.locator("#me-phone").count() == 1)
+    page.fill("#me-phone", "+971 50 111 2222")
+    page.fill("#me-notice", "2 weeks")
+    # a background db change must not wipe what is being typed
+    page.evaluate("window.__store.jobs['job_1'].match = 86; window.__notify && window.__notify()")
+    page.wait_for_timeout(100)
+    check("typed edit survives a background update", page.input_value("#me-phone") == "+971 50 111 2222")
+    page.fill("#me-email", "not-an-email")
+    page.locator("button", has_text="Save changes").click(); page.wait_for_timeout(200)
+    check("bad email rejected with the page's own message, nothing saved", page.evaluate("window.__store.profile.me.phone") != "+971 50 111 2222" and "email" in page.locator("#toast").inner_text().lower())
+    page.fill("#me-email", "new.address@example.com")
+    ans_idx = [i for i, a in enumerate(kit["profile"]["answers"]) if "notice period" in a["q"].lower()][0]
+    page.fill(f"#me-ans-{ans_idx}", "Two weeks")
+    page.fill("#me-linkedin", "linkedin.com/in/new-handle")
+    page.locator("button", has_text="Save changes").click(); page.wait_for_timeout(300)
+    me = page.evaluate("window.__store.profile.me")
+    check("profile saved", me["phone"] == "+971 50 111 2222" and me["notice"] == "2 weeks" and me["email"] == "new.address@example.com")
+    check("linkedin gets https://", me["linkedin"] == "https://linkedin.com/in/new-handle")
+    check("old contact details remembered for substitution", me["orig"]["phone"] == kit["profile"]["phone"])
+    check("needs-you answers untouched", any(a["needs"] for a in me["answers"]))
+    check("edit mode closed, details shown", "Edit details" in page.locator("#main").inner_text())
+    page.locator("nav button", has_text="To apply").click()
+    dcard = page.locator(".card", has_text="Intertec Systems")
+    if dcard.locator(".detail").count() == 0:
+        dcard.locator(".head").click()
+    det_txt = dcard.locator(".detail").inner_text()
+    old_phone = kit["profile"]["phone"]
+    check("letters show the new phone, not the old", "+971 50 111 2222" in det_txt and old_phone not in det_txt)
+    check("answers use the edited text", "Two weeks" in det_txt)
+    dcard.locator("button", has_text="Show").last.click()
+    cv_txt = dcard.locator(".detail").inner_text()
+    check("CV text shows new email + linkedin", "new.address@example.com" in cv_txt and "linkedin.com/in/new-handle" in cv_txt and kit["profile"]["email"] not in cv_txt)
+    page.locator("nav button", has_text="Me").click()
     # me tab + dark
     page.locator("nav button", has_text="Me").click()
     check("my details has phone", "+971" in page.locator("#main").inner_text())
