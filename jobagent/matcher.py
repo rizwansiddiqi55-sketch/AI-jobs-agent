@@ -88,6 +88,7 @@ def score(job: dict, profile: dict) -> Match:
     have = {s.lower() for s in profile["skills"]}
     certs_have = {c.lower() for c in profile["certifications_short"]}
     concerns, bd = [], {}
+    visa_block = False
 
     # --- technical skills (required weighted 1.0, preferred 0.5) ---
     req_text, pref_text = _split_required_preferred(desc)
@@ -216,7 +217,6 @@ def score(job: dict, profile: dict) -> Match:
         bd["salary"] = (2.5, "Salary not stated/not AED-monthly (neutral)")
 
     sysadmin = False
-    visa_block = False
     # Informational flags (no score impact): requirements the user must judge for themselves.
     if re.search(r"driving licen[cs]e", full, re.I):
         concerns.append("Mentions a UAE driving licence requirement - confirm you meet it")
