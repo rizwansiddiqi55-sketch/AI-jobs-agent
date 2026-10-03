@@ -122,6 +122,9 @@ def score(job: dict, profile: dict) -> Match:
         note = f"{yrs} yrs vs {need}+ required"
         concerns.append(f"Asks {need}+ years; you have {yrs}")
     bd["experience"] = (round(pts, 1), note)
+    junior_level = need is not None and need <= 3 and yrs >= 10
+    if need is not None and 4 <= need <= 6 and yrs >= 12:
+        concerns.append(f"Asks for only {need}+ years vs your {yrs} - possibly below your level; check pay and scope")
 
     # --- seniority ---
     hard_skip = False
@@ -136,6 +139,9 @@ def score(job: dict, profile: dict) -> Match:
         pts, note = 10, "Senior-level title"
     else:
         pts, note = 7, "Mid-level/unspecified title (you are 15+ yrs)"
+    if junior_level and not hard_skip:
+        pts, note = 2, f"Role asks only {need} years - junior for a {yrs}-year engineer"
+        concerns.append(f"Role asks only {need} years of experience - below your seniority")
     bd["seniority"] = (pts, note)
 
     # --- location / visa ---
@@ -146,10 +152,11 @@ def score(job: dict, profile: dict) -> Match:
         needs = profile.get("visa_status") == "cancelled"
         hard = re.search(r"(must|should|need to)\s+(have|hold|possess)[^.\n]{0,30}(uae|valid|own)[^.\n]{0,20}visa|"
                          r"(valid|active|existing|current)\s+(uae\s+)?(residen\w+|visa|employment visa)|"
-                         r"transferable\s+visa|visa\s+transfer|own\s+visa|(no|not)\s+(provide|offer|sponsor)\w*[^.\n]{0,20}visa|"
+                         r"(valid|active|current)\s+emirates\s+id|transferable\s+visa|visa\s+transfer|own\s+visa|(no|not)\s+(provide|offer|sponsor)\w*[^.\n]{0,20}visa|"
                          r"visa\s+(is\s+)?not\s+(provided|sponsored)", full, re.I)
         soft = re.search(r"(uae\s+)?(residen\w+|work eligibility|visa)[^.\n]{0,30}\bpreferred\b|\bpreferred\b[^.\n]{0,30}(uae\s+)?(residen\w+|work eligibility)", full, re.I)
         if needs and hard and not soft:
+            visa_block = True
             bd["visa"] = (1, "Employer appears to require an existing UAE visa; yours is cancelled")
             concerns.append("Posting seems to require a valid/transferable UAE visa - yours is cancelled; ask before applying")
         elif needs and (hard or soft):
@@ -209,6 +216,7 @@ def score(job: dict, profile: dict) -> Match:
         bd["salary"] = (2.5, "Salary not stated/not AED-monthly (neutral)")
 
     sysadmin = False
+    visa_block = False
     # Informational flags (no score impact): requirements the user must judge for themselves.
     if re.search(r"driving licen[cs]e", full, re.I):
         concerns.append("Mentions a UAE driving licence requirement - confirm you meet it")
@@ -221,6 +229,8 @@ def score(job: dict, profile: dict) -> Match:
         concerns.append("Systems/CCTV/telephony duties - may be a sysadmin role under a network title")
         sysadmin = True
     total = round(sum(v[0] for v in bd.values()), 1)
+    if junior_level or visa_block:
+        total = min(total, 59)
     if req_unmet:
         total = min(total, 79)
     if sysadmin:
@@ -238,17 +248,19 @@ def score(job: dict, profile: dict) -> Match:
         total = min(total, 40)  # a hard-rule failure can never look like a good match
     elif kind == "intl-nosponsor":
         total = min(total, 49)
-    rec = recommend(total, concerns, hard_skip, kind, salary_gap, len(missing_req), req_unmet)
+    rec = recommend(total, concerns, hard_skip, kind, salary_gap, len(missing_req), req_unmet, visa_block)
     return Match(total, {k: {"points": v[0], "max": WEIGHTS[k], "note": v[1]} for k, v in bd.items()},
                  matching, missing, sorted(wanted), concerns, rec)
 
 
 def recommend(total: float, concerns: list, hard_skip: bool, loc_kind: str, salary_gap: str = "", missing_req: int = 0,
-              req_certs_unmet: list | None = None) -> str:
+              req_certs_unmet: list | None = None, visa_block: bool = False) -> str:
     if any(c.startswith("Possible scam") for c in concerns):
         return "DO NOT APPLY - scam indicators"
     if hard_skip or loc_kind == "intl-nosponsor":
         return "SKIP - fails a hard rule (seniority or location/sponsorship)"
+    if visa_block:
+        return "SKIP for now - posting requires an existing UAE visa/Emirates ID (ask the employer first if you still want it)"
     if salary_gap == "far":
         return "SKIP - advertised pay far below your minimum"
     if salary_gap == "below":

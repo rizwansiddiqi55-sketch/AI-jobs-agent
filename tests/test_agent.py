@@ -122,6 +122,11 @@ class Matching(unittest.TestCase):
         self.assertLessEqual(m.breakdown["visa"]["points"], 1)
         self.assertTrue(any("cancelled" in c for c in m.concerns))
 
+    def test_valid_emirates_id_required(self):
+        m = matcher.score({**GOOD, "description": GOOD["description"] + "\nCurrently based in the UAE with a valid Emirates ID."}, PROFILE)
+        self.assertLessEqual(m.breakdown["visa"]["points"], 1)
+        self.assertTrue(m.recommendation.startswith("SKIP for now"))
+
     def test_cancelled_visa_preferred_residency(self):
         m = matcher.score({**GOOD, "description": GOOD["description"] + "\nUAE residency preferred."}, PROFILE)
         self.assertEqual(m.breakdown["visa"]["points"], 3)
@@ -129,6 +134,17 @@ class Matching(unittest.TestCase):
     def test_cancelled_visa_unstated_is_minor(self):
         m = matcher.score(GOOD, PROFILE)
         self.assertEqual(m.breakdown["visa"]["points"], 4)
+
+    def test_three_year_role_is_below_level(self):
+        m = matcher.score({**GOOD, "title": "Network Engineer", "salary": "", "experience_required": "3 years",
+                           "description": "3 years experience. CCNA mandatory. Cisco switching, VLAN, STP."}, PROFILE)
+        self.assertLessEqual(m.score, 59)
+        self.assertTrue(m.recommendation.startswith("SKIP"))
+
+    def test_five_year_minimum_is_only_a_note(self):
+        m = matcher.score({**GOOD, "experience_required": "5+ years"}, PROFILE)
+        self.assertGreaterEqual(m.score, 80)
+        self.assertTrue(any("possibly below your level" in c for c in m.concerns))
 
     def test_scam_capped(self):
         m = matcher.score({**GOOD, "description": "Pay a registration fee. WhatsApp only."}, PROFILE)

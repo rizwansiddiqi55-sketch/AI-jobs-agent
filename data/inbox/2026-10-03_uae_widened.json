@@ -1,0 +1,105 @@
+[
+ {
+  "company": "Darwinbox",
+  "title": "Senior Network & Security Engineer",
+  "location": "Dubai, UAE",
+  "url": "https://to.indeed.com/aab6qpxbh67n",
+  "job_ref": "JOBSEARCH_100132",
+  "posted_date": "2026-09-08",
+  "experience_required": "5+ years",
+  "source": "Indeed",
+  "description": "Implementation and support of customer enterprise network and security infrastructure (multi-site, UAE customer sites; occasional after-hours change windows).\nResponsibilities:\n- Install, configure and troubleshoot routing & switching: Cisco routers, Cisco Catalyst, Cisco Meraki MS, Aruba switches\n- Firewalls/NGFW: Cisco Firepower (FTD), Cisco Meraki MX, ASA; exposure to Check Point, Palo Alto and Fortinet is a plus\n- NAC/AAA: Cisco ISE (PAN/PSN/MNT, PxGrid), 802.1X/MAB wired and wireless, posture, TACACS+; Aruba ClearPass exposure is an advantage\n- L2/L3 troubleshooting; hardening, configuration backups; HLD/LLD documentation; ServiceNow; mentor junior engineers; support presales\nRequired Qualifications:\n- Bachelor's degree in Computer Science / IT\n- 5+ years enterprise network and security implementation or operations; multi-site delivery\n- OSPF, EIGRP, BGP, VLANs, STP, VTP, LACP, HSRP, DNS, DHCP, NAT; VPN site-to-site, GRE, DMVPN, IPsec\n- Hands-on Cisco ASA/Firepower, HA/failover; Cisco ISE deployment, Dot1x/MAB, posture, TACACS+\n- Working knowledge of cloud networking is a plus. Industry certification on relevant technologies."
+ },
+ {
+  "company": "Efforts Solutions IT",
+  "title": "Senior Network & Security Engineer",
+  "location": "Abu Dhabi, UAE",
+  "url": "https://to.indeed.com/aavl2ktzxl48",
+  "job_ref": "JOBSEARCH_100119",
+  "posted_date": "2026-09-14",
+  "salary": "AED 12,000 - 20,000 per month",
+  "experience_required": "8+ years",
+  "source": "Indeed",
+  "description": "Abu Dhabi client site, full-time, 8+ years. UAE experience mandatory. Currently based in the UAE with a valid Emirates ID, which will be required for the security clearance process if shortlisted.\nSenior engineer for operational support and project delivery for a client's firewalls, load balancers, NAC and secure email in a ticket-driven, SLA-bound environment.\nStrong expertise in at least five of: Juniper and Huawei product experience highly preferred; NAC Cisco ISE; firewall Palo Alto; load balancing F5 or Kemp LoadMaster; routing & switching Juniper; FortiMail; Kemp; ITIL.\nCore requirements: 8+ years network & security engineering; incident/ticket management, root cause analysis, SLA adherence; works solo at client site. Certifications preferred."
+ },
+ {
+  "company": "BlackStone eIT",
+  "title": "Senior Network & Security Engineer / Senior Network Consultant",
+  "location": "Abu Dhabi, UAE",
+  "url": "https://to.indeed.com/aa4tlrcbxhhx",
+  "job_ref": "JOBSEARCH_100123",
+  "posted_date": "2026-09-10",
+  "experience_required": "5-7 years",
+  "source": "Indeed",
+  "description": "Onsite network and security consultancy and support in a large enterprise environment, 1-year consultancy engagement in the UAE. L1/L2/L3 troubleshooting within an ITIL framework; after-hours and weekend support when required.\nRequirements:\n- Bachelor's or Master's degree in Computer Engineering / Computer Science / IT\n- Minimum 5-7 years managing large enterprise network environments\n- CCNP certification is mandatory\n- Strong enterprise networking and troubleshooting; ITIL framework experience\nPreferred Certifications: CCIE, Fortinet NSE, F5 Certified BIG-IP Administrator, CISSP\nAdditional preferred: penetration testing; ManageEngine monitoring; previous experience supporting UAE Government / Public Sector customers is highly preferred."
+ },
+ {
+  "company": "INFRA ASSURE",
+  "title": "Senior Firewall & Perimeter Security Engineer",
+  "location": "Dubai, UAE",
+  "url": "https://to.indeed.com/aakg4tnrj9hl",
+  "job_ref": "JOBSEARCH_100139",
+  "posted_date": "2026-09-29",
+  "salary": "AED 18,000 - 20,000 per month",
+  "experience_required": "10+ years",
+  "source": "Indeed",
+  "description": "On-site Dubai. Senior network engineering plus perimeter security: technical authority on network boundaries.\nResponsibilities:\n- Architect, deploy and manage NGFW (Palo Alto, Fortinet, Check Point, Cisco); IDS/IPS, WAF, secure VPN gateways\n- Threat mitigation and incident response; firewall rule audits, ACLs, security policy aligned to ISO 27001 and NESA\n- Secure routing (BGP, OSPF), switching; vulnerability assessments and penetration testing support\nRequired Qualifications:\n- Minimum 10 years hands-on network and perimeter security with senior network engineering background\n- Configuring and troubleshooting enterprise firewalls, VPNs, load balancers, secure web gateways\n- TCP/IP, OSI, routing protocols, packet analysis\n- Certifications: active certifications highly preferred (e.g. CISSP, PCNSE, Fortinet NSE 7/8, CCIE/CCNP Security, Check Point CCSE)\n- Mentor junior engineers; communicate security risks to non-technical stakeholders"
+ },
+ {
+  "company": "Ceenex Global LLC",
+  "title": "L3 Security Engineer",
+  "location": "Dubai, UAE",
+  "url": "https://to.indeed.com/aa7dfcdpwbnr",
+  "job_ref": "JOBSEARCH_100141",
+  "posted_date": "2026-09-30",
+  "salary": "AED 8,000 - 9,000 per month",
+  "experience_required": "13+ years",
+  "source": "Indeed",
+  "description": "L3 security support: firewalls, IDS/IPS, VPN, WAF, SIEM and endpoint security; incident response and root-cause analysis; Fortinet, Palo Alto, Cisco, Check Point; vulnerability management, hardening, compliance.\nRequires L3 candidates with 13+ years hands-on experience and deep troubleshooting.\nRequired: Palo Alto Certification (Required). Deep troubleshooting 10 years (Required)."
+ },
+ {
+  "company": "Atos",
+  "title": "Security Engineer",
+  "location": "Dubai, UAE",
+  "url": "https://to.indeed.com/aadf2jccqfny",
+  "job_ref": "JOBSEARCH_100157",
+  "posted_date": "2026-09-29",
+  "experience_required": "5 years",
+  "source": "Indeed",
+  "description": "Cybersecurity consultant with presales support, technical workshops, demonstrations and implementation across identity & access management, data protection, encryption, PKI, key management, cloud security. Works with senior consultants and aims to develop into a consultant or solution architect.\nExperience: 5 years in cybersecurity or IT infrastructure; exposure to IAM, HSM, PKI, KMS. Preferred certifications: CompTIA Security+, ISC2 CC, Microsoft SC-900, SC-300, AZ-900, Network+."
+ },
+ {
+  "company": "WSP",
+  "title": "Senior Engineer - ICT / Security",
+  "location": "Dubai, UAE",
+  "url": "https://to.indeed.com/aarwcxvwsg2y",
+  "job_ref": "JOBSEARCH_100160",
+  "posted_date": "2026-09-23",
+  "experience_required": "13+ years",
+  "source": "Indeed",
+  "description": "Construction supervision team: oversee installation and delivery of ICT, ELV and security systems on major construction projects; review shop drawings, submittals, ITPs; witness testing and commissioning of structured cabling, fibre optic, CCTV, access control, intrusion detection, public address, intercom. Minimum 13 years in ICT/ELV engineering with 7 in construction supervision or PMC/consultancy. GCC experience preferred."
+ },
+ {
+  "company": "VaporVM",
+  "title": "Network Engineer",
+  "location": "Dubai, UAE",
+  "url": "https://to.indeed.com/aa4sycln8jys",
+  "job_ref": "JOBSEARCH_100161",
+  "posted_date": "2026-09-07",
+  "experience_required": "3 years",
+  "source": "Indeed",
+  "description": "Network Engineer with 3 years hands-on experience, mainly switching. CCNA certification mandatory. VLANs, trunking, STP/RSTP, EtherChannel, inter-VLAN routing, port security, DHCP snooping; L1/L2 support; Cisco Catalyst preferred. Required: 3 years relevant experience, CCNA (mandatory)."
+ },
+ {
+  "company": "Cloud Box Technologies LLC",
+  "title": "Network Engineer / Network Operations",
+  "location": "Sharjah, UAE",
+  "url": "https://to.indeed.com/aar68gp72pfz",
+  "job_ref": "JOBSEARCH_100148",
+  "posted_date": "2026-09-22",
+  "salary": "AED 2,337.96 - 8,000 per month",
+  "experience_required": "5+ years",
+  "source": "Indeed",
+  "description": "Enterprise campus network operations: Ruckus wireless estate, access and distribution switching, FortiGate firewall and security posture. L2/L3 support; 802.1X, RADIUS; FortiGate HA, IPsec VPN, SSL-VPN, SD-WAN rules.\nRequired: 5+ years hands-on enterprise networking with 3 years owning production wireless and firewalls; Ruckus administration; FortiGate administration; L2/L3 switching; 802.1X, RADIUS, DHCP, DNS.\nPreferred: Fortinet NSE4 and NSE5 or NSE7; Ruckus certification; CCNA / CCNP Enterprise; UAE driving licence preferred."
+ }
+]
