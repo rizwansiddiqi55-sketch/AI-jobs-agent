@@ -73,7 +73,7 @@ Status values: New, Review Required, Ready to Apply, Applied, Assessment, Interv
 `site/index.html` is a static snapshot of the tracker (company, role, match, status, links; no CV, phone or email).
 It is deployed to the Vercel project `ai-jobs-dashboard` with **Vercel Authentication on for all deployments**, so only
 logged-in members of your Vercel team can open it. Refresh it with `jobagent export site/index.html`, then redeploy
-(`vercel --prod` from `site/`, or ask Claude Code to redeploy). It is a snapshot, not a live view: the agent, the
+(`vercel --prod` from `site/`, or ask Claude Code to redeploy). Keep the Vercel project's Output Directory unset: setting it to `.` made the site return 404 even though the deployment showed READY. It is a snapshot, not a live view: the agent, the
 database and the SUBMIT approval step all stay on your own computer.
 
 ## Phone version (Apply Kit)
