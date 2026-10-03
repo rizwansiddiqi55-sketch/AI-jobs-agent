@@ -59,9 +59,29 @@ class Matching(unittest.TestCase):
         m = matcher.score({**GOOD, "description": "CCNP Data Center required. Cisco Nexus."}, PROFILE)
         self.assertTrue(any("CCNP Data Center" in c for c in m.concerns))
 
-    def test_nse4_covered_by_nse7(self):
-        m = matcher.score({**GOOD, "description": "NSE4 required. Fortinet firewall."}, PROFILE)
-        self.assertEqual(m.breakdown["certifications"]["points"], 10)
+    def test_required_vs_preferred_certs(self):
+        d = "Fortinet certifications required: NSE 4 (minimum); NSE 5-7 strongly preferred. Cisco, BGP."
+        m = matcher.score({**GOOD, "description": d, "salary": ""}, PROFILE)
+        req = [c for c in m.concerns if c.startswith("REQUIRED")]
+        self.assertEqual(len(req), 1)
+        self.assertIn("NSE4", req[0])
+        self.assertTrue(m.recommendation.startswith("REVIEW"))
+        d2 = "Cisco, BGP. NSE 4 is a plus. Preferably PCNSE."
+        m2 = matcher.score({**GOOD, "description": d2, "salary": ""}, PROFILE)
+        self.assertFalse([c for c in m2.concerns if c.startswith("REQUIRED")])
+
+    def test_expired_nse7_not_counted(self):
+        m = matcher.score({**GOOD, "description": "NSE4 required. NSE7 preferred. Fortinet firewall."}, PROFILE)
+        self.assertEqual(m.breakdown["certifications"]["points"], 0)
+        self.assertTrue(any("NSE" in c for c in m.concerns))
+        self.assertNotIn("NSE7", " ".join(PROFILE["certifications"]))
+
+    def test_cv_lists_nse7_as_expired(self):
+        master = (ROOT / "data" / "master_cv.md").read_text()
+        cv, _ = tailor.tailor_cv(master, GOOD)
+        self.assertIn("Fortinet NSE7 (expired)", cv)
+        self.assertNotIn("NSE7 certified", cv)
+        self.assertNotIn("NSE7", tailor.cover_letter(GOOD, PROFILE, []))
 
     def test_ccna_covered_by_ccnp(self):
         m = matcher.score({**GOOD, "description": "CCNA required. Cisco routing."}, PROFILE)

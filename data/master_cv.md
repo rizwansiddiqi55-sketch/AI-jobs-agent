@@ -7,7 +7,7 @@ Anything marked [FILL IN] blocks final CV export (use --draft to override).
 +971 529515132 | rizwan.siddiqui@live.com | Dubai, UAE | linkedin.com/in/rizwansiddiqi
 
 ## Summary
-Senior Network & Security Engineer with 15+ years of enterprise experience designing, deploying, and securing multi-site LAN/WAN, data center, and cloud-adjacent network infrastructure across Healthcare, Government, Oil & Gas, and Financial Services sectors. Proven expertise in Cisco ISE / Network Access Control (NAC), Zero Trust security architecture, SD-WAN, and enterprise firewall administration (Palo Alto, Cisco Firepower/FMC, Fortinet). CCNP Security, CCNP Enterprise, CCNP Data Center Core, and Fortinet NSE7 certified.
+Senior Network & Security Engineer with 15+ years of enterprise experience designing, deploying, and securing multi-site LAN/WAN, data center, and cloud-adjacent network infrastructure across Healthcare, Government, Oil & Gas, and Financial Services sectors. Proven expertise in Cisco ISE / Network Access Control (NAC), Zero Trust security architecture, SD-WAN, and enterprise firewall administration (Palo Alto, Cisco Firepower/FMC, Fortinet). CCNP Security, CCNP Enterprise, and CCNP Data Center Core certified.
 
 ## Technical Skills
 - Network Access Control & Zero Trust: Cisco ISE, 802.1X, MAB, Zero Trust security principles, RADIUS, TACACS+, SGT, dACL, Aruba ClearPass, LDAP, SAML, MFA
@@ -76,7 +76,7 @@ Senior Network & Security Engineer with 15+ years of enterprise experience desig
 - CCNP Security Certified
 - CCNP Enterprise Certified
 - CCNP Data Center Core Certified
-- Fortinet NSE7 Certified
+- Fortinet NSE7 (expired)
 
 ## Education
 - BS in Computer Science, COMSATS Institute of Information Technology, Lahore, Pakistan

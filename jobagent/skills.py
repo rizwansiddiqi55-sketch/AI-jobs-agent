@@ -79,7 +79,7 @@ CERTS = {
 }
 
 # A cert the candidate is deemed to cover through a higher one he holds.
-CERT_COVERED_BY = {"CCNA": "CCNP", "Fortinet NSE4": "Fortinet NSE7"}
+CERT_COVERED_BY = {"CCNA": "CCNP"}
 
 UAE_PRIMARY = ["dubai", "abu dhabi"]
 UAE_OTHER = ["sharjah", "ajman", "ras al khaimah", "rak", "fujairah", "umm al quwain", "al ain",

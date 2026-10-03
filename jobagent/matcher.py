@@ -42,6 +42,20 @@ def _split_required_preferred(desc: str):
     return "\n".join(req_lines), "\n".join(pref_lines)
 
 
+REQ_WORDS = re.compile(r"\b(required|requirements?|must|mandatory|minimum|active|essential)\b", re.I)
+PREF_SPLIT = re.compile(r"(\bprefer\w*|\bplus\b|\bdesirable\b|\badvantage\b|\bnice to have\b|\bbonus\b)", re.I)
+
+
+def _required_certs(text: str) -> set:
+    """Certs named in a 'required/must/active/minimum' context (text after a 'preferred/plus' cue doesn't count)."""
+    out = set()
+    for seg in re.split(r"[;\n.]", text):
+        before = PREF_SPLIT.split(seg)[0]
+        if REQ_WORDS.search(before):
+            out |= sk.find_certs(before)
+    return out
+
+
 def _years_required(text: str):
     nums = [int(a) for a in re.findall(r"(\d{1,2})\s*\+?\s*(?:-|to|–)?\s*\d{0,2}\s*\+?\s*years?", text.lower())]
     return min(nums) if nums else None
@@ -145,11 +159,13 @@ def score(job: dict, profile: dict) -> Match:
         if c.lower() in certs_have or (covered_by and covered_by.lower() in certs_have):
             held.append(c)
     unmet = sorted(wanted - set(held))
+    req_unmet = sorted(_required_certs(full) - set(held))
     if wanted:
         pts = WEIGHTS["certifications"] * len(held) / len(wanted)
         note = f"Held/covered: {held or 'none'}; not held: {unmet or 'none'}"
         for c in unmet:
-            concerns.append(f"Certification mentioned that you do not hold: {c}")
+            tag = "REQUIRED certification you do not hold" if c in req_unmet else "Certification mentioned that you do not hold"
+            concerns.append(f"{tag}: {c}")
     else:
         pts, note = 0.8 * WEIGHTS["certifications"], "No certifications named"
     bd["certifications"] = (round(pts, 1), note)
@@ -190,6 +206,8 @@ def score(job: dict, profile: dict) -> Match:
         concerns.append("Systems/CCTV/telephony duties - may be a sysadmin role under a network title")
         sysadmin = True
     total = round(sum(v[0] for v in bd.values()), 1)
+    if req_unmet:
+        total = min(total, 79)
     if sysadmin:
         total = min(total, 70)
     if salary_gap == "far":
@@ -205,12 +223,13 @@ def score(job: dict, profile: dict) -> Match:
         total = min(total, 40)  # a hard-rule failure can never look like a good match
     elif kind == "intl-nosponsor":
         total = min(total, 49)
-    rec = recommend(total, concerns, hard_skip, kind, salary_gap, len(missing_req))
+    rec = recommend(total, concerns, hard_skip, kind, salary_gap, len(missing_req), req_unmet)
     return Match(total, {k: {"points": v[0], "max": WEIGHTS[k], "note": v[1]} for k, v in bd.items()},
                  matching, missing, sorted(wanted), concerns, rec)
 
 
-def recommend(total: float, concerns: list, hard_skip: bool, loc_kind: str, salary_gap: str = "", missing_req: int = 0) -> str:
+def recommend(total: float, concerns: list, hard_skip: bool, loc_kind: str, salary_gap: str = "", missing_req: int = 0,
+              req_certs_unmet: list | None = None) -> str:
     if any(c.startswith("Possible scam") for c in concerns):
         return "DO NOT APPLY - scam indicators"
     if hard_skip or loc_kind == "intl-nosponsor":
@@ -219,6 +238,8 @@ def recommend(total: float, concerns: list, hard_skip: bool, loc_kind: str, sala
         return "SKIP - advertised pay far below your minimum"
     if salary_gap == "below":
         return "REVIEW - good fit but advertised pay is below your minimum; apply only if negotiable"
+    if req_certs_unmet:
+        return f"REVIEW - required certification not held ({', '.join(req_certs_unmet)}); check whether it is a hard filter"
     if total >= 80 and missing_req > 2:
         return f"REVIEW - strong overall but {missing_req} required skills are missing; check you can credibly cover them"
     if total >= 80:

@@ -13,15 +13,12 @@
   "certifications": [
     "CCNP Security",
     "CCNP Enterprise",
-    "CCNP Data Center Core",
-    "Fortinet NSE7"
+    "CCNP Data Center Core"
   ],
   "certifications_short": [
     "CCNP",
     "CCNP Security",
-    "CCNP Enterprise",
-    "Fortinet NSE5+",
-    "Fortinet NSE7"
+    "CCNP Enterprise"
   ],
   "skills": [
     "routing",
@@ -105,5 +102,8 @@
     "linkedin": "https://linkedin.com/in/rizwansiddiqi",
     "willing to relocate": "TO CONFIRM",
     "work authori[sz]ation|visa status|right to work": "TO CONFIRM"
-  }
+  },
+  "expired_certifications": [
+    "Fortinet NSE7"
+  ]
 }
