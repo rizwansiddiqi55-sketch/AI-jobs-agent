@@ -36,16 +36,29 @@ def to_markdown(rows) -> str:
                       *("| " + " | ".join(esc(c) for c in r) + " |" for r in m[1:])]) + "\n"
 
 
-def to_html(rows) -> str:
+def to_html(rows, kit_url: str = "") -> str:
+    """Self-contained dashboard page. With kit_url, every row links to that job's card in the Apply Kit
+    (the page there opens '#job-<id>'). The page holds no CV, phone or email."""
     m = rows_to_matrix(rows)
-    head = "".join(f"<th>{html.escape(h)}</th>" for h in m[0])
+    head = "".join(f"<th>{html.escape(h)}</th>" for h in m[0]) + ("<th>Apply Kit</th>" if kit_url else "")
     body = ""
     for r, row in zip(m[1:], rows):
         cells = "".join(
             f"<td><a href='{html.escape(c)}'>link</a></td>" if h == "Job URL" and c.startswith("http")
             else f"<td>{html.escape(c)}</td>" for h, c in zip(m[0], r))
+        if kit_url:
+            cells += f"<td><a class='kit' href='{html.escape(kit_url)}#job-{row['id']}'>Open kit</a></td>"
         body += f"<tr>{cells}</tr>"
-    return (f"<!doctype html><meta charset=utf-8><title>Job Dashboard</title>"
-            "<style>body{font:14px system-ui;margin:20px}table{border-collapse:collapse}"
-            "td,th{border:1px solid #ccc;padding:4px 8px}th{background:#f2f2f2}</style>"
-            f"<h2>Job Dashboard - {date.today()}</h2><table><tr>{head}</tr>{body}</table>")
+    top = (f"<p><a class='btn' href='{html.escape(kit_url)}'>Open Apply Kit</a> "
+           "<span class='hint'>Cover letters, CV text and copy-paste answers for each job, on your phone.</span></p>"
+           if kit_url else "")
+    return ("<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'>"
+            "<meta name=robots content='noindex,nofollow'><title>Job Dashboard</title>"
+            "<style>:root{--bg:#F2F6F7;--fg:#14232B;--line:#D3DDE1;--head:#E5EDEF;--accent:#0B6E6E;--ink:#fff;--muted:#566870}"
+            "@media (prefers-color-scheme:dark){:root{--bg:#0E1A1F;--fg:#E6EEF1;--line:#27393F;--head:#1D3037;--accent:#4FC3BD;--ink:#06201F;--muted:#93A6AE;color-scheme:dark}}"
+            "body{background:var(--bg);color:var(--fg);font:14px system-ui,sans-serif;margin:0;padding:16px}"
+            "h2{margin:0 0 12px}table{border-collapse:collapse}td,th{border:1px solid var(--line);padding:6px 10px;text-align:left}"
+            "th{background:var(--head)}a{color:var(--accent)}.wrap{overflow-x:auto}"
+            ".btn,.kit{display:inline-block;background:var(--accent);color:var(--ink);padding:10px 16px;border-radius:8px;text-decoration:none;font-weight:600}"
+            ".kit{padding:6px 10px;white-space:nowrap;font-size:13px}.hint{color:var(--muted);font-size:13px;margin-left:8px}</style>"
+            f"<h2>Job Dashboard - {date.today()}</h2>{top}<div class='wrap'><table><tr>{head}</tr>{body}</table></div>")

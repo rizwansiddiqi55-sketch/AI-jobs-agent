@@ -158,7 +158,9 @@ def cmd_recruiter(a, con):
 def cmd_export(a, con):
     rows = _rows(con)
     out = Path(a.out)
-    out.write_text({"md": dashboard.to_markdown, "html": dashboard.to_html}[out.suffix[1:]](rows), encoding="utf-8")
+    kit_url = config.load_profile().get("apply_kit_url", "")
+    render = {"md": dashboard.to_markdown, "html": lambda r: dashboard.to_html(r, kit_url)}[out.suffix[1:]]
+    out.write_text(render(rows), encoding="utf-8")
     print("wrote", out)
 
 

@@ -273,7 +273,7 @@ textarea { min-height: 150px; resize: vertical; }
   function card(j) {
     var info = hostInfo(j), open = !!state.open[j.id], cls = recClass(j.recommendation);
     var sub = h("div", { class: "sub" }, j.location || "", j.salary ? j.salary : "");
-    var el = h("div", { class: "card" },
+    var el = h("div", { class: "card", id: "job-" + j.id },
       h("button", { class: "head", "aria-expanded": String(open), onclick: function () { state.open[j.id] = !state.open[j.id]; render(); } },
         h("div", { class: "co" }, j.company),
         h("div", { class: "ti" }, j.title),
@@ -460,6 +460,23 @@ textarea { min-height: 150px; resize: vertical; }
     else renderCheck(main);
   }
 
+  /* Dashboard links arrive as #job-<id>: open that job's card once, on the right tab. */
+  var hashDone = false;
+  function openFromHash() {
+    if (hashDone) return;
+    var m = /^#job-([A-Za-z0-9_.~-]+)$/.exec(window.location.hash || "");
+    if (!m) { hashDone = true; return; }
+    var job = state.jobs.filter(function (j) { return String(j.id) === m[1]; })[0];
+    if (!job) return; /* data may not be loaded yet; the next snapshot retries */
+    hashDone = true;
+    state.tab = job.status === "Applied" ? "applied" : "todo";
+    if (recWord(job.recommendation) === "Skip" || !isOpen(job)) state.showSkip = true;
+    state.open[job.id] = true;
+    render();
+    var el = document.getElementById("job-" + job.id);
+    if (el) el.scrollIntoView({ block: "start" });
+  }
+
   /* ---------- data ---------- */
   function start() {
     render();
@@ -470,7 +487,7 @@ textarea { min-height: 150px; resize: vertical; }
       state.db = db;
       db.collection("jobs").onSnapshot(function (snap) {
         state.jobs = snap.docs.map(function (d) { return d.data(); }).filter(function (d) { return d && d.company; });
-        state.ready = true; render();
+        state.ready = true; render(); openFromHash();
       }, function () { state.ready = true; render(); });
       db.doc("profile/me").onSnapshot(function (snap) { state.me = snap.exists ? snap.data() : null; render(); }, function () {});
     }, function () { state.dbMissing = true; state.ready = true; render(); });

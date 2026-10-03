@@ -370,6 +370,22 @@ class EmployerApply(unittest.TestCase):
             s.close()
 
 
+class Dashboard(unittest.TestCase):
+    def test_html_links_each_row_to_its_kit_and_has_no_personal_details(self):
+        from jobagent import dashboard
+        con = fresh_db()
+        row, _ = db.add_job(con, GOOD)
+        rows = con.execute("SELECT * FROM jobs").fetchall()
+        html_ = dashboard.to_html(rows, "https://claude.ai/artifact/abc")
+        self.assertIn(f"https://claude.ai/artifact/abc#job-{row['id']}", html_)
+        self.assertIn("Open Apply Kit", html_)
+        self.assertIn("noindex", html_)
+        self.assertIn("prefers-color-scheme:dark", html_)
+        for secret in (PROFILE["phone"], PROFILE["email"]):
+            self.assertNotIn(secret, html_)
+        self.assertNotIn("Open Apply Kit", dashboard.to_html(rows))
+
+
 class Import(unittest.TestCase):
     def test_sample_file(self):
         con = fresh_db()

@@ -81,5 +81,6 @@ A private mobile page keeps your tracker on your phone: ranked jobs, and for eac
 copy-paste screening answers, an **Open** button to the job on its own site, **I applied** (records the date and a
 follow-up 5 business days later) and **Skip**. **Add job** takes any posting you paste (LinkedIn or anywhere else), asks
 Claude to compare it with your CV, and drafts a letter. It never applies for you and never logs in to a job site.
+The Vercel dashboard (`jobagent export site/index.html`) has an **Open kit** button on every row that opens that job's card in the Apply Kit (`#job-<id>`); set the Apply Kit link in `apply_kit_url` in `data/profile.json`.
 `jobagent export-kit kit.json` rebuilds the data (it contains personal details; keep it private).
 LinkedIn, Indeed and other job boards forbid bots, so on those you apply yourself in their app, with the answers copied from here.
