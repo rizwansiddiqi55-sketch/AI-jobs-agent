@@ -7,6 +7,17 @@ Python 3.11+, standard library only (Playwright optional for form filling).
 Find -> Filter -> Match -> Tailor CV -> Cover letter -> Fill -> Approve -> Submit -> Track -> Follow up
 ```
 
+## Install on your own computer (recommended)
+```bash
+git clone <your private repo URL> && cd AI-jobs-agent
+./install.sh            # Windows: install.bat      (add --browser for form pre-filling)
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+jobagent doctor         # tells you what is left to fill in
+jobagent list
+```
+Needs Python 3.11+. Your data stays in `data/` (the tracker `data/jobs.db` is never committed). Back it up by copying that file.
+Because submitting needs you to type SUBMIT in a terminal, run the agent locally for that step.
+
 ## Setup
 1. Edit `data/profile.json` (add your phone; set `work_authorization` honestly).
 2. Edit `data/master_cv.md`: replace every `[FILL IN ...]` with real employers, dates and achievements.

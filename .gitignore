@@ -2,5 +2,7 @@ __pycache__/
 *.pyc
 data/jobs.db
 data/output/
-data/inbox/
 .pytest_cache/
+.venv/
+*.egg-info/
+build/

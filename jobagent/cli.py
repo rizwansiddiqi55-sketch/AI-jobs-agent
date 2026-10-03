@@ -22,6 +22,32 @@ def cmd_import(a, con):
         print("  SCAM WARNING:", f)
 
 
+def cmd_doctor(a, con):
+    import importlib.util
+    ok = True
+
+    def check(good, msg, fix=""):
+        nonlocal ok
+        print(("  ok    " if good else "  FIX   ") + msg + ("" if good else f"  -> {fix}"))
+        ok &= good
+    p = config.load_profile()
+    master = config.master_cv_path().read_text(encoding="utf-8")
+    print(f"Data folder: {config.HOME}")
+    check(sys.version_info >= (3, 11), f"Python {sys.version.split()[0]}", "install Python 3.11+")
+    check(bool(p["phone"]), "Phone in profile.json", "add your phone number")
+    check(not p["work_authorization"].startswith("TO CONFIRM"), "Work authorisation wording set",
+          "edit work_authorization in data/profile.json (visa answers are left blank until then)")
+    check(not tailor.placeholders(master), "Master CV has no [FILL IN] placeholders", "complete data/master_cv.md")
+    check(all(not str(v).startswith("TO CONFIRM") for v in p["screening_answers"].values()),
+          "Screening answers set (relocation / work authorisation)",
+          "edit screening_answers in profile.json, or you will be asked each time")
+    print("  info  browser form-filling " + ("available" if importlib.util.find_spec("playwright")
+          else "not installed (optional: rerun installer with --browser)"))
+    n = con.execute("SELECT COUNT(*) FROM jobs").fetchone()[0]
+    print(f"  info  {n} jobs in tracker ({config.db_path()})")
+    print("Ready." if ok else "Fix the items above, then run `jobagent doctor` again.")
+
+
 def cmd_rescore(a, con):
     print(f"Re-scored {importer.rescore(con)} jobs")
 
@@ -133,6 +159,7 @@ def build_parser():
     p = argparse.ArgumentParser(prog="jobagent", description=__doc__)
     sp = p.add_subparsers(dest="cmd", required=True)
     s = sp.add_parser("import", help="import jobs from JSON/CSV"); s.add_argument("file"); s.set_defaults(f=cmd_import)
+    s = sp.add_parser("doctor", help="check your setup"); s.set_defaults(f=cmd_doctor)
     s = sp.add_parser("rescore", help="re-run matching on all stored jobs"); s.set_defaults(f=cmd_rescore)
     s = sp.add_parser("add", help="add one job manually")
     for n in ("company", "title"):
