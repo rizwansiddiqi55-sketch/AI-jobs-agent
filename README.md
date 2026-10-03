@@ -84,3 +84,9 @@ Claude to compare it with your CV, and drafts a letter. It never applies for you
 The Vercel dashboard (`jobagent export site/index.html`) has an **Open kit** button on every row that opens that job's card in the Apply Kit (`#job-<id>`); set the Apply Kit link in `apply_kit_url` in `data/profile.json`.
 `jobagent export-kit kit.json` rebuilds the data (it contains personal details; keep it private).
 LinkedIn, Indeed and other job boards forbid bots, so on those you apply yourself in their app, with the answers copied from here.
+
+## Daily update
+A scheduled routine runs every morning (06:47 Dubai time). It rebuilds the tracker from the Apply Kit (`jobagent restore`),
+searches Indeed for new network / network-security roles, keeps only new, recent, relevant ones (`jobagent filter-new`),
+scores them, adds their kits to the Apply Kit (`jobagent kit-new --split`), refreshes `site/index.html` and pushes (Vercel redeploys).
+It never applies, sends email or changes the status of a job you already track.

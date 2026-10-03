@@ -386,6 +386,68 @@ class Dashboard(unittest.TestCase):
         self.assertNotIn("Open Apply Kit", dashboard.to_html(rows))
 
 
+class DailyUpdate(unittest.TestCase):
+    def _kit_dir(self):
+        d = Path(tempfile.mkdtemp()) / "jobs"
+        d.mkdir(parents=True)
+        docs = [
+            {"id": 1, "company": "Acme", "title": "Senior Network Engineer", "location": "Dubai, UAE", "url": "https://to.indeed.com/a1",
+             "status": "Applied", "appliedOn": "2026-10-03", "followUp": "2026-10-09", "match": 90, "source": "Indeed"},
+            {"id": 2, "company": "Beta Corp", "title": "Network Security Engineer", "location": "Abu Dhabi", "url": "https://to.indeed.com/b2",
+             "status": "Closed", "match": 70},
+            {"id": "li_x1", "company": "Gamma", "title": "Firewall Engineer", "location": "Dubai", "url": "https://www.linkedin.com/jobs/view/9",
+             "status": "New", "match": 80, "source": "LinkedIn (pasted)"},
+        ]
+        for x in docs:
+            (d / f"job_{x['id']}.json").write_text(json.dumps({"id": f"job_{x['id']}", "data": x, "version": 2}))
+        return d.parent
+
+    def test_restore_keeps_ids_statuses_and_dedupes(self):
+        from jobagent import restore
+        con = fresh_db()
+        r = restore.restore(con, str(self._kit_dir()))
+        self.assertEqual((r["restored"], r["foreign"], r["max_id"]), (3, 1, 2))
+        self.assertEqual(db.get(con, 1)["status"], "Applied")
+        self.assertEqual(db.get(con, 1)["followup_date"], "2026-10-09")
+        incoming = [
+            {"company": "ACME LLC", "title": "Senior Network Engineer", "location": "Dubai", "url": "https://to.indeed.com/NEWLINK", "posted_date": "2026-10-01"},
+            {"company": "Beta Corp", "title": "Network Security Engineer", "location": "Abu Dhabi", "url": "https://x/other", "posted_date": "2026-10-01"},
+            {"company": "Gamma", "title": "Firewall Engineer", "location": "Dubai", "url": "https://y", "posted_date": "2026-10-01"},
+            {"company": "Delta", "title": "Senior Network Engineer", "location": "Dubai", "url": "https://d", "posted_date": date.today().isoformat()},
+            {"company": "Old Co", "title": "Network Engineer", "location": "Dubai", "url": "https://o", "posted_date": "2025-01-01"},
+            {"company": "Kid Co", "title": "Junior Network Engineer", "location": "Dubai", "url": "https://k", "posted_date": date.today().isoformat()},
+            {"company": "Bakery", "title": "Pastry Chef", "location": "Dubai", "url": "https://p", "posted_date": date.today().isoformat()},
+        ]
+        res = restore.filter_new(con, incoming)
+        self.assertEqual([j["company"] for j in res["new"]], ["Delta"])
+        self.assertEqual(len(res["duplicates"]), 3)  # same company+title re-posted with a new link is still a duplicate
+        self.assertEqual((len(res["too_old"]), len(res["not_relevant"])), (1, 2))
+
+    def test_new_jobs_continue_numbering_and_kit_new_only_exports_them(self):
+        from jobagent import restore
+        con = fresh_db()
+        restore.restore(con, str(self._kit_dir()))
+        row, created = db.add_job(con, {**GOOD, "company": "Fresh Co", "url": "https://fresh/1", "job_ref": "F1"})
+        self.assertTrue(created)
+        self.assertEqual(row["id"], 3)  # restored real ids were 1 and 2; the phone-only job has a negative id
+        self.assertLess(con.execute("SELECT id FROM jobs WHERE company='Gamma'").fetchone()[0], 0)
+        out = Path(tempfile.mkdtemp()) / "kit.json"
+        split = Path(tempfile.mkdtemp()) / "split"
+        docs = restore.kit_new(con, 3, str(out), split_dir=str(split))
+        self.assertEqual([d["company"] for d in docs], ["Fresh Co"])
+        self.assertIn("kit", docs[0])
+        writes = json.loads((split / "writes.json").read_text())
+        self.assertEqual([w["doc_id"] for w in writes], ["job_3"])
+        self.assertTrue(Path(writes[0]["file_path"]).exists())
+
+    def test_dashboard_export_skips_phone_only_rows(self):
+        from jobagent import restore, dashboard
+        con = fresh_db()
+        restore.restore(con, str(self._kit_dir()))
+        rows = con.execute("SELECT * FROM jobs WHERE id > 0").fetchall()
+        self.assertNotIn("Gamma", dashboard.to_html(rows, "https://claude.ai/artifact/x"))
+
+
 class Import(unittest.TestCase):
     def test_sample_file(self):
         con = fresh_db()

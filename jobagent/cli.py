@@ -6,7 +6,7 @@ from datetime import date
 from pathlib import Path
 
 from . import apply as apply_mod
-from . import config, dashboard, db, importer, kit, matcher, recruiter, scam, tailor
+from . import config, dashboard, db, importer, kit, matcher, recruiter, restore, scam, tailor
 
 
 def _rows(con, where="1=1", args=()):
@@ -52,6 +52,24 @@ def cmd_export_kit(a, con):
     d = kit.write(con, a.out, a.kit_min)
     n = sum(1 for j in d['jobs'] if 'kit' in j)
     print(f"wrote {a.out}: {len(d['jobs'])} jobs, {n} with a full kit (contains personal data: keep it private)")
+
+
+def cmd_restore(a, con):
+    r = restore.restore(con, a.dir)
+    print(f"restored {r['restored']} jobs from the Apply Kit ({r['foreign']} added from the phone); max id {r['max_id']}")
+
+
+def cmd_filter_new(a, con):
+    res = restore.filter_new(con, json.loads(Path(a.file).read_text(encoding="utf-8")), a.max_age)
+    Path(a.out).write_text(json.dumps(res["new"], indent=1, ensure_ascii=False), encoding="utf-8")
+    print(f"new {len(res['new'])} | already tracked {len(res['duplicates'])} | too old {len(res['too_old'])} | not relevant {len(res['not_relevant'])}")
+    for j in res["new"]:
+        print(f"  NEW  {j.get('company')} - {j.get('title')} ({j.get('location')}, {j.get('posted_date', '?')})")
+
+
+def cmd_kit_new(a, con):
+    docs = restore.kit_new(con, a.min_id, a.out, split_dir=a.split)
+    print(f"wrote {len(docs)} kit documents to {a.out}: ids {[d['id'] for d in docs]}")
 
 
 def cmd_rescore(a, con):
@@ -156,7 +174,7 @@ def cmd_recruiter(a, con):
 
 
 def cmd_export(a, con):
-    rows = _rows(con)
+    rows = _rows(con, "id > 0")  # phone-only jobs (negative ids) have no laptop row to link
     out = Path(a.out)
     kit_url = config.load_profile().get("apply_kit_url", "")
     render = {"md": dashboard.to_markdown, "html": lambda r: dashboard.to_html(r, kit_url)}[out.suffix[1:]]
@@ -174,6 +192,10 @@ def build_parser():
     sp = p.add_subparsers(dest="cmd", required=True)
     s = sp.add_parser("import", help="import jobs from JSON/CSV"); s.add_argument("file"); s.set_defaults(f=cmd_import)
     s = sp.add_parser("export-kit", help="export the phone apply-kit JSON (personal data)"); s.add_argument("out"); s.add_argument("--kit-min", type=float, default=65); s.set_defaults(f=cmd_export_kit)
+    s = sp.add_parser("restore", help="rebuild the tracker from Apply Kit documents (daily update)"); s.add_argument("dir"); s.set_defaults(f=cmd_restore)
+    s = sp.add_parser("filter-new", help="keep only new, recent, relevant postings from a search-results JSON")
+    s.add_argument("file"); s.add_argument("out"); s.add_argument("--max-age", type=int, default=45); s.set_defaults(f=cmd_filter_new)
+    s = sp.add_parser("kit-new", help="Apply Kit documents for jobs with id >= MIN_ID"); s.add_argument("min_id", type=int); s.add_argument("out"); s.add_argument("--split", help="also write one file per document plus writes.json here"); s.set_defaults(f=cmd_kit_new)
     s = sp.add_parser("doctor", help="check your setup"); s.set_defaults(f=cmd_doctor)
     s = sp.add_parser("rescore", help="re-run matching on all stored jobs"); s.set_defaults(f=cmd_rescore)
     s = sp.add_parser("add", help="add one job manually")
