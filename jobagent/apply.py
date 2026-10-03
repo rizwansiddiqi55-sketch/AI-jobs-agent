@@ -15,6 +15,26 @@ LEGAL = re.compile(r"(declar|i agree|consent|terms|certify|true and (accurate|co
                    r"privacy|gdpr|legally|bound|authori[sz]e)", re.I)
 CURRENT_SALARY = re.compile(r"(current|present|last)\s+(salary|ctc|pay|compensation)", re.I)
 APPROVAL_PHRASE = "SUBMIT"
+# Job boards forbid automated applying and need your login/captcha: never automate these, use the employer's own site.
+BLOCKED_HOSTS = ("indeed.com", "linkedin.com", "bayt.com", "glassdoor.com", "gulftalent.com", "naukrigulf.com",
+                 "naukri.com", "monster", "founditgulf.com", "freehire.me", "bebee.com", "wuzzuf.net", "ziprecruiter")
+
+
+def target_url(row) -> str:
+    """The employer's own application page (apply_url). Refuses job boards and missing URLs."""
+    from urllib.parse import urlsplit
+    url = (row["apply_url"] or "").strip()
+    if not url:
+        raise RuntimeError(f"No employer application URL for job {row['id']}. Open the company's own careers page, "
+                           f"find this role, then run: jobagent set-url {row['id']} <that URL>")
+    host = urlsplit(url).netloc.lower()
+    if any(b in host for b in BLOCKED_HOSTS):
+        raise RuntimeError(f"{host} is a job board; automated applying there is not allowed (terms, login, captcha). "
+                           "Use the employer's own careers page URL instead.")
+    if not url.startswith(("http://", "https://", "file://")):
+        raise RuntimeError("apply_url must start with https://")
+    return url
+
 
 
 def answer_question(question: str, profile: dict):
@@ -105,7 +125,7 @@ def render_ready(job, m, problems, qa, d) -> str:
     return "\n".join(lines)
 
 
-def submit(con, job_id: int, auto_click: bool = False, stdin=None, stdout=None) -> str:
+def submit(con, job_id: int, stdin=None, stdout=None) -> str:
     """Approval gate. Returns the outcome message."""
     stdin, stdout = stdin or sys.stdin, stdout or sys.stdout
     if not stdin.isatty():
@@ -129,14 +149,54 @@ def submit(con, job_id: int, auto_click: bool = False, stdin=None, stdout=None) 
           end="", file=stdout, flush=True)
     if stdin.readline().strip() != APPROVAL_PHRASE:
         return "Cancelled - nothing submitted."
-    if auto_click:
-        from .browser import fill_and_submit
-        fill_and_submit(row["url"], config.load_profile(), d, qa)
-    else:
-        print(f"Open {row['url']} and submit with the prepared files. Type DONE once submitted: ",
+    print(f"Open {row['apply_url'] or row['url']} and submit with the prepared files. Type DONE once submitted: ",
+          end="", file=stdout, flush=True)
+    if stdin.readline().strip() != "DONE":
+        return "Not recorded as applied."
+    fu = db.mark_applied(con, job_id)
+    return f"Recorded as Applied. Follow-up due {fu.isoformat()}."
+
+
+def go(con, job_id: int, stdin=None, stdout=None, session_factory=None) -> str:
+    """One command: open the employer form pre-filled -> you review in the browser -> you type SUBMIT -> it clicks submit."""
+    stdin, stdout = stdin or sys.stdin, stdout or sys.stdout
+    if not stdin.isatty():
+        raise PermissionError("Needs an interactive terminal: a human must approve.")
+    row = db.get(con, job_id)
+    if row["application_date"]:
+        return f"Already applied on {row['application_date']}; nothing to do."
+    again = db.already_applied(con, job_dict(row))
+    if again and again["id"] != job_id:
+        return f"Duplicate of job {again['id']} (applied {again['application_date']}); nothing submitted."
+    url = target_url(row)
+    d = packet_dir(job_id)
+    if not (d / "application_ready.md").exists():
+        prepare(con, job_id)
+    ready = (d / "application_ready.md").read_text(encoding="utf-8")
+    print(ready, file=stdout)
+    letter = (d / "cover_letter.md").read_text(encoding="utf-8")
+    profile = config.load_profile()
+    if session_factory is None:
+        from .browser import FormSession
+        session_factory = FormSession
+    session = session_factory()
+    try:
+        session.open(url, profile, d, letter)
+        print(f"\nOpened {url}\nFilled: {len(session.filled)} field(s). Left blank for YOU: "
+              f"{session.left_blank or 'none'}", file=stdout)
+        print("Check every field in the browser, answer anything blank, and tick any declarations yourself.",
+              file=stdout)
+        print(f"Type {APPROVAL_PHRASE} here to click the site's submit button, anything else to cancel: ",
+              end="", file=stdout, flush=True)
+        if stdin.readline().strip() != APPROVAL_PHRASE:
+            return "Cancelled - nothing submitted."
+        session.click_submit()
+        print("Clicked submit. Did the site confirm the application? Type DONE to record it: ",
               end="", file=stdout, flush=True)
         if stdin.readline().strip() != "DONE":
-            return "Not recorded as applied."
+            return "Not recorded as applied (check the browser, then run `jobagent status <id> Applied`)."
+    finally:
+        session.close()
     fu = db.mark_applied(con, job_id)
     return f"Recorded as Applied. Follow-up due {fu.isoformat()}."
 

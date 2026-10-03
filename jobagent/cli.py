@@ -109,14 +109,20 @@ def cmd_prepare(a, con):
 
 
 def cmd_submit(a, con):
-    print(apply_mod.submit(con, a.id, auto_click=a.auto_click))
+    print(apply_mod.submit(con, a.id))
 
 
-def cmd_fill(a, con):
-    from .browser import fill
+def cmd_go(a, con):
+    print(apply_mod.go(con, a.id))
+
+
+def cmd_set_url(a, con):
     row = db.get(con, a.id)
-    d = apply_mod.packet_dir(a.id)
-    fill(row["url"], config.load_profile(), d, json.loads((d / "screening_answers.json").read_text()))
+    probe = dict(row, apply_url=a.url)
+    apply_mod.target_url(probe)  # validates: employer site only, no job boards
+    db.update(con, a.id, apply_url=a.url)
+    db.log(con, a.id, "apply_url", a.url)
+    print(f"Employer application URL saved for #{a.id} {row['company']}. Run: jobagent apply go {a.id}")
 
 
 def cmd_followups(a, con):
@@ -177,9 +183,9 @@ def build_parser():
     ap = sp.add_parser("apply", help="prepare / fill / submit (approval-gated)").add_subparsers(dest="sub", required=True)
     s = ap.add_parser("prepare"); s.add_argument("id", type=int); s.add_argument("--questions", help="file with one screening question per line")
     s.add_argument("--draft", action="store_true", help="allow [FILL IN] placeholders (drafts only)"); s.set_defaults(f=cmd_prepare)
-    s = ap.add_parser("fill", help="open the form and pre-fill; never submits"); s.add_argument("id", type=int); s.set_defaults(f=cmd_fill)
-    s = ap.add_parser("submit", help="human-approved submission"); s.add_argument("id", type=int)
-    s.add_argument("--auto-click", action="store_true", help="after approval, let the browser click submit"); s.set_defaults(f=cmd_submit)
+    s = ap.add_parser("go", help="ONE COMMAND: open employer form pre-filled, you approve, it clicks submit"); s.add_argument("id", type=int); s.set_defaults(f=cmd_go)
+    s = ap.add_parser("submit", help="record an application you submitted yourself (approval-gated)"); s.add_argument("id", type=int); s.set_defaults(f=cmd_submit)
+    s = sp.add_parser("set-url", help="save the employer's own application page for a job"); s.add_argument("id", type=int); s.add_argument("url"); s.set_defaults(f=cmd_set_url)
     s = sp.add_parser("followups", help="applications due for follow-up"); s.set_defaults(f=cmd_followups)
     s = sp.add_parser("followup-draft", help="draft (not send) a follow-up email"); s.add_argument("id", type=int); s.set_defaults(f=cmd_followup_draft)
     s = sp.add_parser("recruiter", help="classify a recruiter message and draft a reply"); s.add_argument("file", nargs="?"); s.set_defaults(f=cmd_recruiter)

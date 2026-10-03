@@ -30,8 +30,9 @@ python -m jobagent import data/samples/sample_jobs.json   # score + scam check +
 python -m jobagent list --min-match 80                    # dashboard (--status, --location, --today, --full)
 python -m jobagent show 1                                 # transparent match breakdown
 python -m jobagent apply prepare 1 --questions q.txt      # tailored CV, cover letter, "Application Ready" packet
-python -m jobagent apply fill 1                           # pre-fill form in a browser; never submits
-python -m jobagent apply submit 1                         # interactive; you type SUBMIT to approve
+python -m jobagent set-url 1 https://careers.example.com/apply/123   # the EMPLOYER's own application page
+python -m jobagent apply go 1                             # ONE COMMAND: opens it pre-filled, you check it, type SUBMIT, it clicks
+python -m jobagent apply submit 1                         # only to RECORD an application you submitted yourself
 python -m jobagent followups                              # due follow-ups (5 business days after applying)
 python -m jobagent followup-draft 1                       # draft only, never sent
 python -m jobagent recruiter msg.txt                      # classify + draft reply, never sent
@@ -43,6 +44,16 @@ python -m jobagent history 1                              # audit trail
 technical skills 40 (required 1.0 / preferred 0.5) - years 15 - seniority 10 - location 10 -
 certifications 10 - industry 5 - visa 5 - salary 5. Junior titles, scam indicators and international
 roles without sponsorship are capped low. Unknowns score neutral, with a concern noted.
+
+## One-click applying (employer sites)
+`jobagent apply go <id>` opens the employer's own careers page in a visible browser, fills your name, contact details,
+notice period, salary, sponsorship answer, cover letter and uploads your tailored CV, then waits. You check the form,
+answer anything left blank, tick any declarations yourself, and type `SUBMIT` in the terminal; only then does it click the
+site's submit button. Then type `DONE` to record it and schedule the follow-up.
+- Works on employer career pages you save with `jobagent set-url`. It refuses job boards (Indeed, LinkedIn, Bayt,
+  Glassdoor, GulfTalent, Naukri...) because they forbid automated applying and need your login/captcha.
+- Needs `./install.sh --browser` (Playwright). If you already have Chrome/Chromium, set `JOBAGENT_CHROMIUM=/path/to/chrome`.
+- Form layouts differ; fields it can't recognise are listed and left blank for you.
 
 ## Safety design
 - `apply submit` needs a real TTY and the exact word `SUBMIT`; no flag bypasses it. Unanswered screening questions block it.

@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS jobs (
   remote INTEGER DEFAULT 0, visa_sponsorship TEXT DEFAULT '',
   match_pct REAL, match_json TEXT DEFAULT '', scam_flags TEXT DEFAULT '',
   status TEXT DEFAULT 'New', application_date TEXT DEFAULT '', followup_date TEXT DEFAULT '',
-  url_key TEXT, ref_key TEXT, sig_key TEXT, created_at TEXT
+  url_key TEXT, ref_key TEXT, sig_key TEXT, created_at TEXT, apply_url TEXT DEFAULT ''
 );
 CREATE INDEX IF NOT EXISTS ix_url ON jobs(url_key);
 CREATE INDEX IF NOT EXISTS ix_ref ON jobs(ref_key);
@@ -32,6 +32,9 @@ def connect() -> sqlite3.Connection:
     con = sqlite3.connect(config.db_path())
     con.row_factory = sqlite3.Row
     con.executescript(SCHEMA)
+    if "apply_url" not in {r[1] for r in con.execute("PRAGMA table_info(jobs)")}:
+        con.execute("ALTER TABLE jobs ADD COLUMN apply_url TEXT DEFAULT ''")
+        con.commit()
     return con
 
 

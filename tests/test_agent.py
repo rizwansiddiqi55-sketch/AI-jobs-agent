@@ -279,6 +279,84 @@ class Approval(unittest.TestCase):
             ap.submit(self.con, self.id, stdin=TTY("SUBMIT\n"), stdout=io.StringIO())
 
 
+class EmployerApply(unittest.TestCase):
+    def setUp(self):
+        self.con = fresh_db()
+        self.row, _ = db.add_job(self.con, GOOD)
+        self.id = self.row["id"]
+
+    def test_job_boards_are_never_automated(self):
+        for url in ("https://to.indeed.com/aab6", "https://www.linkedin.com/jobs/view/1", "https://www.bayt.com/en/x"):
+            with self.assertRaises(RuntimeError):
+                ap.target_url({"id": 1, "apply_url": url})
+        with self.assertRaises(RuntimeError):
+            ap.target_url({"id": 1, "apply_url": ""})
+        self.assertEqual(ap.target_url({"id": 1, "apply_url": "https://careers.acme.example/job/9"}),
+                         "https://careers.acme.example/job/9")
+
+    def test_choose_value_rules(self):
+        from jobagent.browser import choose_value, _values
+        v = _values(PROFILE)
+        self.assertEqual(choose_value("First name", v, PROFILE, "L")[0], "Rizwan")
+        self.assertEqual(choose_value("Cover letter", v, PROFILE, "LETTER")[0], "LETTER")
+        self.assertIn("sponsor", choose_value("Do you require visa sponsorship?", v, PROFILE, "L")[0])
+        self.assertIsNone(choose_value("What is your current salary?", v, PROFILE, "L")[0])
+        self.assertIsNone(choose_value("I declare this is true and accurate", v, PROFILE, "L")[0])
+
+    def test_go_needs_url_tty_and_exact_phrase(self):
+        class Fake:
+            def __init__(self): self.filled, self.left_blank, self.clicked, self.closed = ["x"], [], False, False
+            def open(self, *a): return self
+            def click_submit(self): self.clicked = True
+            def close(self): self.closed = True
+        with self.assertRaises(RuntimeError):  # no employer URL yet
+            ap.go(self.con, self.id, stdin=TTY("SUBMIT\n"), stdout=io.StringIO(), session_factory=Fake)
+        db.update(self.con, self.id, apply_url="https://careers.acme.example/job/9")
+        with self.assertRaises(PermissionError):
+            ap.go(self.con, self.id, stdin=io.StringIO("SUBMIT\nDONE\n"), stdout=io.StringIO(), session_factory=Fake)
+        s = Fake()
+        out = ap.go(self.con, self.id, stdin=TTY("submit\n"), stdout=io.StringIO(), session_factory=lambda: s)
+        self.assertIn("Cancelled", out)
+        self.assertFalse(s.clicked)
+        self.assertTrue(s.closed)
+        s = Fake()
+        out = ap.go(self.con, self.id, stdin=TTY("SUBMIT\nDONE\n"), stdout=io.StringIO(), session_factory=lambda: s)
+        self.assertTrue(s.clicked)
+        self.assertIn("Recorded as Applied", out)
+        self.assertEqual(db.get(self.con, self.id)["status"], "Applied")
+        self.assertIn("Already applied", ap.go(self.con, self.id, stdin=TTY(""), stdout=io.StringIO(), session_factory=Fake))
+
+    def test_real_browser_prefill_and_gate(self):
+        try:
+            import playwright  # noqa: F401
+            from jobagent.browser import FormSession
+        except ImportError:
+            self.skipTest("playwright not installed")
+        db.update(self.con, self.id, apply_url=(ROOT / "tests/fixtures/apply_form.html").as_uri())
+        ap.prepare(self.con, self.id, [])
+        d = ap.packet_dir(self.id)
+        s = FormSession(headless=True)
+        try:
+            s.open((ROOT / "tests/fixtures/apply_form.html").as_uri(), PROFILE, d, (d / "cover_letter.md").read_text())
+            p = s.page
+            self.assertEqual(p.input_value("#fn"), "Rizwan")
+            self.assertEqual(p.input_value("#ln"), "Siddiqi")
+            self.assertEqual(p.input_value("#em"), PROFILE["email"])
+            self.assertEqual(p.input_value("#np"), "Immediate")
+            self.assertIn("21,000", p.input_value("#es"))
+            self.assertTrue(p.input_value("#vs").startswith("Yes"))
+            self.assertIn("Dear Hiring Team", p.input_value("#cl"))
+            self.assertEqual(p.input_value("#cs"), "")          # current salary: left for the human
+            self.assertFalse(p.is_checked("#decl"))             # declaration: never ticked
+            self.assertEqual(p.title(), "Apply - Test Employer")  # not submitted yet
+            self.assertTrue(any("current salary" in b.lower() for b in s.left_blank))
+            self.assertTrue(p.evaluate("document.getElementById('cv').files.length") == 1)
+            s.click_submit()
+            self.assertEqual(p.title(), "SUBMITTED")
+        finally:
+            s.close()
+
+
 class Import(unittest.TestCase):
     def test_sample_file(self):
         con = fresh_db()

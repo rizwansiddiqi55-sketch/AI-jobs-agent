@@ -1,64 +1,97 @@
-"""Optional Playwright form filler (best effort - every site differs).
+"""Playwright form filler for EMPLOYER career pages (best effort - every site differs).
 
-`fill()` pre-populates and STOPS; the user reviews in the visible browser.
-`fill_and_submit()` is only reachable via apply.submit() after the human typed the approval phrase.
+FormSession.open() fills what it can and STOPS. click_submit() is only called by apply.go() after the
+human typed the approval phrase. Checkboxes/radios are never touched (legal declarations stay yours),
+and anything the profile cannot answer is left blank for you to complete in the visible browser.
 """
+import os
+import re
 from pathlib import Path
 
-from .apply import md_to_html
+from .apply import answer_question, md_to_html
 
-FIELD_MAP = [  # (label regex, profile key)
-    (r"first name", "first"), (r"(last|family|sur) ?name", "last"), (r"full name|^name", "name"),
-    (r"e-?mail", "email"), (r"phone|mobile", "phone"), (r"linkedin", "linkedin"),
-    (r"notice", "notice"), (r"expected.*(salary|ctc)|salary expectation", "salary"),
-    (r"location|city", "location"),
+FIELD_MAP = [  # (label regex, value key) - checked before screening answers
+    (r"first name|given name", "first"), (r"last name|family name|surname", "last"),
+    (r"full name|^name\b|your name", "name"), (r"e-?mail", "email"), (r"phone|mobile|contact number", "phone"),
+    (r"linkedin", "linkedin"), (r"current location|city|location", "location"),
 ]
+SKIP_TYPES = "hidden|file|checkbox|radio|submit|button|password|search"
 
 
 def _values(profile):
     first, _, last = profile["name"].partition(" ")
-    sal = profile["salary_expectation_aed"]
     return {"first": first, "last": last, "name": profile["name"], "email": profile["email"],
-            "phone": profile["phone"], "linkedin": profile["linkedin"], "notice": profile["notice_period"],
-            "salary": f"AED {sal['min']:,}-{sal['max']:,} per month", "location": profile["location"]}
+            "phone": profile["phone"], "linkedin": profile["linkedin"], "location": profile["location"]}
 
 
-def _make_pdf(page, md_path: Path) -> Path:
-    pdf = md_path.with_suffix(".pdf")
-    page.set_content(md_to_html(md_path.read_text(encoding="utf-8")))
-    page.pdf(path=str(pdf), format="A4")
-    return pdf
+_LABEL_JS = """el => [
+  ...(el.labels ? [...el.labels].map(l => l.innerText) : []),
+  el.getAttribute('aria-label'), el.getAttribute('placeholder'), el.getAttribute('name'), el.id
+].filter(Boolean).join(' ')"""
 
 
-def fill(url, profile, packet: Path, qa, submit=False, headless=False):
-    import re
-    from playwright.sync_api import sync_playwright
-    vals = _values(profile)
-    with sync_playwright() as p:
-        b = p.chromium.launch(headless=headless)
-        page = b.new_page()
-        cv_pdf = _make_pdf(page, packet / "cv.md")
-        page.goto(url)
-        for el in page.query_selector_all("input:not([type=hidden]):not([type=file]):not([type=checkbox]):not([type=radio]), textarea"):
-            label = " ".join(filter(None, [el.get_attribute("aria-label"), el.get_attribute("placeholder"),
-                                           el.get_attribute("name"), el.get_attribute("id")])).lower()
-            for pat, key in FIELD_MAP:
-                if re.search(pat, label) and vals.get(key) and not el.input_value():
-                    el.fill(vals[key]); break
+def choose_value(label: str, vals: dict, profile: dict, letter: str):
+    """-> (text or None, how). Pure function so it can be unit-tested without a browser."""
+    low = label.lower()
+    if "cover" in low and "letter" in low:
+        return letter, "cover letter"
+    for pat, key in FIELD_MAP:
+        if re.search(pat, low) and vals.get(key):
+            return vals[key], key
+    ans, status = answer_question(label, profile)
+    return (ans, "screening answer") if status == "auto" and ans else (None, status)
+
+
+class FormSession:
+    def __init__(self, headless=False):
+        self.headless = headless
+        self._pw = self.browser = self.page = None
+        self.filled, self.left_blank = [], []
+
+    def open(self, url, profile, packet: Path, letter: str):
+        from playwright.sync_api import sync_playwright
+        self._pw = sync_playwright().start()
+        exe = os.environ.get("JOBAGENT_CHROMIUM") or None  # optional: use an existing Chromium/Chrome binary
+        self.browser = self._pw.chromium.launch(headless=self.headless, executable_path=exe)
+        self.page = self.browser.new_page()
+        cv_pdf, cl_pdf = self._pdf(packet / "cv.md"), self._pdf(packet / "cover_letter.md")
+        self.page.goto(url)
+        self.page.wait_for_load_state("domcontentloaded")
+        vals = _values(profile)
+        sel = f"input:not([type]), input:not([type=hidden]):not([type=file]):not([type=checkbox]):not([type=radio])" \
+              f":not([type=submit]):not([type=button]):not([type=password]):not([type=search]), textarea"
+        for el in self.page.query_selector_all(sel):
+            if not el.is_visible() or el.input_value():
+                continue
+            label = el.evaluate(_LABEL_JS)
+            text, how = choose_value(label, vals, profile, letter)
+            if text:
+                el.fill(text)
+                self.filled.append(f"{label.strip()[:40]} <- {how}")
             else:
-                for q in qa:  # only pre-approved answers
-                    if q["status"] == "auto" and q["question"].lower()[:30] in label:
-                        el.fill(q["answer"])
-        for f in page.query_selector_all("input[type=file]"):
-            f.set_input_files(str(cv_pdf))
-        if submit:
-            page.get_by_role("button", name=re.compile(r"submit|apply", re.I)).first.click()
-            page.wait_for_timeout(3000)
-            b.close()
-        else:
-            input("Review the form in the browser. Press Enter here to close it (nothing was submitted)...")
-            b.close()
+                self.left_blank.append(label.strip()[:60] or "(unlabelled field)")
+        files = [f for f in self.page.query_selector_all("input[type=file]")]
+        for f in files:
+            label = f.evaluate(_LABEL_JS).lower()
+            f.set_input_files(str(cl_pdf if "cover" in label else cv_pdf))
+            self.filled.append(f"{label.strip()[:40] or 'file upload'} <- " + ("cover letter PDF" if "cover" in label else "CV PDF"))
+        return self
 
+    def _pdf(self, md_path: Path) -> Path:
+        pdf = md_path.with_suffix(".pdf")
+        p = self.browser.new_page()
+        p.set_content(md_to_html(md_path.read_text(encoding="utf-8")))
+        p.pdf(path=str(pdf), format="A4")
+        p.close()
+        return pdf
 
-def fill_and_submit(url, profile, packet, qa):
-    fill(url, profile, packet, qa, submit=True, headless=False)
+    def click_submit(self):
+        btn = self.page.get_by_role("button", name=re.compile(r"^\s*(submit|apply|send application)", re.I)).first
+        btn.click()
+        self.page.wait_for_timeout(3000)
+
+    def close(self):
+        if self.browser:
+            self.browser.close()
+        if self._pw:
+            self._pw.stop()

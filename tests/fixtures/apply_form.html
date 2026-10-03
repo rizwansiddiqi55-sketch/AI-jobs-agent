@@ -1,0 +1,16 @@
+<!doctype html><meta charset=utf-8><title>Apply - Test Employer</title>
+<form onsubmit="event.preventDefault();document.getElementById('done').hidden=false;document.title='SUBMITTED'">
+ <label for=fn>First name</label><input id=fn name=fn>
+ <label for=ln>Last name</label><input id=ln name=ln>
+ <label for=em>Email address</label><input id=em type=email>
+ <label for=ph>Phone number</label><input id=ph type=tel>
+ <label for=li>LinkedIn profile URL</label><input id=li>
+ <label for=np>What is your notice period?</label><input id=np>
+ <label for=es>What is your expected salary?</label><input id=es>
+ <label for=vs>Do you require visa sponsorship?</label><input id=vs>
+ <label for=cs>What is your current salary?</label><input id=cs>
+ <label for=cl>Cover letter</label><textarea id=cl></textarea>
+ <label for=cv>Upload your CV</label><input id=cv type=file>
+ <label><input id=decl type=checkbox> I declare the information is true and accurate</label>
+ <button type=submit>Submit application</button>
+</form><p id=done hidden>Thanks, application received</p>
