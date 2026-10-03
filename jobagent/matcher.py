@@ -143,7 +143,22 @@ def score(job: dict, profile: dict) -> Match:
     bd["location"] = (lpts, lnote)
     concerns += lconc
     if kind == "uae":
-        bd["visa"] = (5, "UAE role - confirm your UAE work-visa/transfer status with the employer")
+        needs = profile.get("visa_status") == "cancelled"
+        hard = re.search(r"(must|should|need to)\s+(have|hold|possess)[^.\n]{0,30}(uae|valid|own)[^.\n]{0,20}visa|"
+                         r"(valid|active|existing|current)\s+(uae\s+)?(residen\w+|visa|employment visa)|"
+                         r"transferable\s+visa|visa\s+transfer|own\s+visa|(no|not)\s+(provide|offer|sponsor)\w*[^.\n]{0,20}visa|"
+                         r"visa\s+(is\s+)?not\s+(provided|sponsored)", full, re.I)
+        soft = re.search(r"(uae\s+)?(residen\w+|work eligibility|visa)[^.\n]{0,30}\bpreferred\b|\bpreferred\b[^.\n]{0,30}(uae\s+)?(residen\w+|work eligibility)", full, re.I)
+        if needs and hard and not soft:
+            bd["visa"] = (1, "Employer appears to require an existing UAE visa; yours is cancelled")
+            concerns.append("Posting seems to require a valid/transferable UAE visa - yours is cancelled; ask before applying")
+        elif needs and (hard or soft):
+            bd["visa"] = (3, "Existing UAE residency/work eligibility preferred; yours is cancelled")
+            concerns.append("Existing UAE residency preferred - you would need new visa sponsorship; say so up front")
+        elif needs:
+            bd["visa"] = (4, "UAE role - employer must sponsor a new work visa (ask early; not stated either way)")
+        else:
+            bd["visa"] = (5, "UAE role - confirm your UAE work-visa/transfer status with the employer")
     elif kind == "intl":
         bd["visa"] = (5, "Sponsorship stated")
     elif kind == "remote":

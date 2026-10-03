@@ -117,6 +117,19 @@ class Matching(unittest.TestCase):
         m = matcher.score({**GOOD, "description": d, "salary": ""}, PROFILE)
         self.assertTrue(m.recommendation.startswith("REVIEW"))
 
+    def test_cancelled_visa_requiring_existing_visa(self):
+        m = matcher.score({**GOOD, "description": GOOD["description"] + "\nMust have a valid UAE visa. No visa sponsorship provided."}, PROFILE)
+        self.assertLessEqual(m.breakdown["visa"]["points"], 1)
+        self.assertTrue(any("cancelled" in c for c in m.concerns))
+
+    def test_cancelled_visa_preferred_residency(self):
+        m = matcher.score({**GOOD, "description": GOOD["description"] + "\nUAE residency preferred."}, PROFILE)
+        self.assertEqual(m.breakdown["visa"]["points"], 3)
+
+    def test_cancelled_visa_unstated_is_minor(self):
+        m = matcher.score(GOOD, PROFILE)
+        self.assertEqual(m.breakdown["visa"]["points"], 4)
+
     def test_scam_capped(self):
         m = matcher.score({**GOOD, "description": "Pay a registration fee. WhatsApp only."}, PROFILE)
         self.assertLessEqual(m.score, 20)
@@ -205,7 +218,12 @@ class Approval(unittest.TestCase):
         self.assertEqual(ap.answer_question("I declare the above is true and accurate", PROFILE)[1], "needs_confirmation")
         self.assertEqual(ap.answer_question("Current salary?", PROFILE)[1], "needs_answer")
         self.assertEqual(ap.answer_question("Do you have Juniper JNCIE?", PROFILE)[1], "needs_answer")
-        self.assertEqual(ap.answer_question("Do you have the right to work in UAE?", PROFILE)[1], "needs_answer")
+        a, s = ap.answer_question("Do you have the right to work in UAE?", PROFILE)
+        self.assertEqual(s, "auto")
+        self.assertIn("cancelled", a)
+        a, s = ap.answer_question("Do you require visa sponsorship?", PROFILE)
+        self.assertTrue(a.startswith("Yes"))
+        self.assertEqual(ap.answer_question("Are you willing to relocate?", PROFILE)[1], "needs_answer")
 
     def test_submit_needs_tty_and_phrase(self):
         ap.prepare(self.con, self.id, ["Notice period?"], draft=True)
