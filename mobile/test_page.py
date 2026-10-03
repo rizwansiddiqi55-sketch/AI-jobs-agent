@@ -54,6 +54,7 @@ with sync_playwright() as p:
     det = page.locator(".detail").first
     txt = det.inner_text()
     check("open link labelled Indeed", "Open on Indeed" in txt)
+    check("copy-link and company-site fallbacks present", "Copy link" in txt and "Find on company site" in txt and "Safari" in txt)
     check("board note says you apply yourself", "Nothing here applies for you" in txt)
     check("cover letter shown", "Dear Hiring Team at Darwinbox" in txt)
     check("current salary left to you", "Your call" in txt and "Tick this yourself" in txt)

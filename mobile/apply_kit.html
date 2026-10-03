@@ -215,6 +215,9 @@ textarea { min-height: 150px; resize: vertical; }
     var d = h("div", { class: "detail" });
     var acts = h("div", { class: "actions" });
     if (info.url) acts.append(h("a", { class: "btn primary", href: info.url, target: "_blank", rel: "noopener noreferrer" }, "Open on " + info.label));
+    if (info.url) acts.append(h("button", { class: "btn", onclick: function () { copy(info.url, "link"); } }, "Copy link"));
+    acts.append(h("a", { class: "btn", target: "_blank", rel: "noopener noreferrer",
+      href: "https://www.google.com/search?q=" + encodeURIComponent(j.company + " careers " + j.title) }, "Find on company site"));
     if (j.status === "Applied") {
       acts.append(h("button", { class: "btn", onclick: function () { save(j, { status: j.prevStatus || "New", appliedOn: "", followUp: "" }); } }, "Undo applied"));
     } else {
@@ -225,7 +228,7 @@ textarea { min-height: 150px; resize: vertical; }
       acts.append(h("button", { class: "btn", onclick: function () { save(j, { status: "Closed", prevStatus: j.status }).then(function () { toast("Skipped"); }); } }, "Skip"));
     }
     d.append(acts);
-    if (info.board) d.append(h("p", { class: "note" }, "You apply on " + info.label + " yourself, in the app or the site. Copy the answers below into its form, and paste the cover letter if it asks for one. Nothing here applies for you."));
+    if (info.board) d.append(h("p", { class: "note" }, "If the link shows an error or a login loop, tap Copy link and paste it into Safari or Chrome, or open it from the " + info.label + " app, because the Claude app's built-in browser can't sign in. Or tap Find on company site and apply there. You apply on " + info.label + " yourself, in the app or the site. Copy the answers below into its form, and paste the cover letter if it asks for one. Nothing here applies for you."));
     else if (info.url) d.append(h("p", { class: "note" }, "Check this is the employer's own page before you enter anything."));
     else d.append(h("p", { class: "note" }, "No link saved for this job."));
     if (j.concerns && j.concerns.length) {
