@@ -6,3 +6,7 @@ data/output/
 .venv/
 *.egg-info/
 build/
+
+/mobile/kit.json
+/mobile/page_test.html
+/mobile/shot_*.png

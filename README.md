@@ -75,3 +75,11 @@ It is deployed to the Vercel project `ai-jobs-dashboard` with **Vercel Authentic
 logged-in members of your Vercel team can open it. Refresh it with `jobagent export site/index.html`, then redeploy
 (`vercel --prod` from `site/`, or ask Claude Code to redeploy). It is a snapshot, not a live view: the agent, the
 database and the SUBMIT approval step all stay on your own computer.
+
+## Phone version (Apply Kit)
+A private mobile page keeps your tracker on your phone: ranked jobs, and for each one a tailored cover letter, CV text and
+copy-paste screening answers, an **Open** button to the job on its own site, **I applied** (records the date and a
+follow-up 5 business days later) and **Skip**. **Add job** takes any posting you paste (LinkedIn or anywhere else), asks
+Claude to compare it with your CV, and drafts a letter. It never applies for you and never logs in to a job site.
+`jobagent export-kit kit.json` rebuilds the data (it contains personal details; keep it private).
+LinkedIn, Indeed and other job boards forbid bots, so on those you apply yourself in their app, with the answers copied from here.

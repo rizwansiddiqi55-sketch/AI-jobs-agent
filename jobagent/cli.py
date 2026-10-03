@@ -6,7 +6,7 @@ from datetime import date
 from pathlib import Path
 
 from . import apply as apply_mod
-from . import config, dashboard, db, importer, matcher, recruiter, scam, tailor
+from . import config, dashboard, db, importer, kit, matcher, recruiter, scam, tailor
 
 
 def _rows(con, where="1=1", args=()):
@@ -46,6 +46,12 @@ def cmd_doctor(a, con):
     n = con.execute("SELECT COUNT(*) FROM jobs").fetchone()[0]
     print(f"  info  {n} jobs in tracker ({config.db_path()})")
     print("Ready." if ok else "Fix the items above, then run `jobagent doctor` again.")
+
+
+def cmd_export_kit(a, con):
+    d = kit.write(con, a.out, a.kit_min)
+    n = sum(1 for j in d['jobs'] if 'kit' in j)
+    print(f"wrote {a.out}: {len(d['jobs'])} jobs, {n} with a full kit (contains personal data: keep it private)")
 
 
 def cmd_rescore(a, con):
@@ -165,6 +171,7 @@ def build_parser():
     p = argparse.ArgumentParser(prog="jobagent", description=__doc__)
     sp = p.add_subparsers(dest="cmd", required=True)
     s = sp.add_parser("import", help="import jobs from JSON/CSV"); s.add_argument("file"); s.set_defaults(f=cmd_import)
+    s = sp.add_parser("export-kit", help="export the phone apply-kit JSON (personal data)"); s.add_argument("out"); s.add_argument("--kit-min", type=float, default=65); s.set_defaults(f=cmd_export_kit)
     s = sp.add_parser("doctor", help="check your setup"); s.set_defaults(f=cmd_doctor)
     s = sp.add_parser("rescore", help="re-run matching on all stored jobs"); s.set_defaults(f=cmd_rescore)
     s = sp.add_parser("add", help="add one job manually")

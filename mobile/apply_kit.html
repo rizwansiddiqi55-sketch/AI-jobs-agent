@@ -1,0 +1,402 @@
+<title>Apply Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: one narrow column built for a thumb. Sticky top bar with four tabs; each job is a card that opens in place
+   into its kit (copy buttons for letter, CV and answers). Match shown as a mono number over a thin meter. */
+:root {
+  --bg: #F2F6F7; --surface: #FFFFFF; --ink: #14232B; --muted: #566870; --line: #D3DDE1; --chip: #E5EDEF;
+  --accent: #0B6E6E; --accent-ink: #FFFFFF; --good: #1B7F4B; --warn: #9A5B00; --bad: #B3261E;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0E1A1F; --surface: #15252C; --ink: #E6EEF1; --muted: #93A6AE; --line: #27393F; --chip: #1D3037;
+    --accent: #4FC3BD; --accent-ink: #06201F; --good: #5BD08F; --warn: #E8B04B; --bad: #FF8A80; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0E1A1F; --surface: #15252C; --ink: #E6EEF1; --muted: #93A6AE; --line: #27393F; --chip: #1D3037;
+  --accent: #4FC3BD; --accent-ink: #06201F; --good: #5BD08F; --warn: #E8B04B; --bad: #FF8A80; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.45;
+  padding-inline: 16px; padding-block: 0 48px; }
+.wrap { max-width: 640px; margin-inline: auto; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+header.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg);
+  padding-block: 14px 0; margin-inline: -16px; padding-inline: 16px; border-bottom: 1px solid var(--line); }
+.bar .wrap { display: flex; flex-direction: column; gap: 10px; }
+.brand { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; margin: 0; }
+.stat { font: 500 12px var(--mono); color: var(--muted); }
+nav.tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+nav.tabs button { flex: 1 0 auto; background: none; border: 0; border-bottom: 3px solid transparent; padding: 10px 8px 9px;
+  color: var(--muted); font-weight: 500; cursor: pointer; white-space: nowrap; }
+nav.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+nav.tabs .n { font: 500 11px var(--mono); margin-left: 5px; padding: 1px 6px; border-radius: 99px; background: var(--chip); }
+
+main { padding-top: 16px; display: flex; flex-direction: column; gap: 12px; }
+.list { display: flex; flex-direction: column; gap: 10px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); min-width: 0; }
+.head { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; width: 100%; text-align: left; background: none; border: 0;
+  padding: 14px; cursor: pointer; min-width: 0; }
+.co { font-weight: 600; overflow-wrap: anywhere; }
+.ti { color: var(--muted); font-size: 14px; overflow-wrap: anywhere; grid-column: 1; }
+.sub { grid-column: 1; font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.score { grid-column: 2; grid-row: 1 / span 3; align-self: start; text-align: right; min-width: 52px; }
+.score b { display: block; font: 500 24px/1 var(--mono); }
+.meter { height: 4px; border-radius: 4px; background: var(--chip); margin-top: 6px; overflow: hidden; }
+.meter i { display: block; height: 100%; background: currentColor; }
+.tag { font: 500 11px var(--mono); text-transform: uppercase; letter-spacing: .06em; }
+.good { color: var(--good); } .warn { color: var(--warn); } .bad { color: var(--bad); }
+.pill { font: 500 11px var(--mono); padding: 2px 8px; border-radius: 99px; background: var(--chip); color: var(--muted); }
+.pill.due { color: var(--warn); background: transparent; border: 1px solid var(--warn); }
+
+.detail { border-top: 1px solid var(--line); padding: 14px; display: flex; flex-direction: column; gap: 14px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border-radius: 8px;
+  border: 1px solid var(--line); background: var(--surface); font-weight: 500; text-decoration: none; cursor: pointer; color: var(--ink); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.small { min-height: 36px; padding: 0 12px; font-size: 13px; }
+.btn:disabled { opacity: .55; cursor: default; }
+.note { font-size: 13px; color: var(--muted); margin: 0; }
+.warnlist { margin: 0; padding-left: 18px; font-size: 14px; display: flex; flex-direction: column; gap: 4px; }
+.blk { border: 1px solid var(--line); border-radius: 8px; min-width: 0; }
+.blk > .bh { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 8px 8px 12px; }
+.bh span { font-weight: 600; font-size: 13px; }
+.txt { margin: 0; padding: 0 12px 12px; white-space: pre-wrap; overflow-wrap: anywhere; font: 13px/1.5 var(--sans); max-height: 220px; overflow: auto; }
+.qa { padding: 10px 12px; border-top: 1px solid var(--line); display: grid; gap: 6px; }
+.qa .q { font-size: 13px; color: var(--muted); }
+.qa .a { overflow-wrap: anywhere; }
+.qa .row { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chips span { font-size: 12px; background: var(--chip); padding: 2px 8px; border-radius: 99px; overflow-wrap: anywhere; }
+.chips.miss span { color: var(--warn); }
+
+.empty { border: 1px dashed var(--line); border-radius: var(--r); padding: 28px 18px; text-align: center; color: var(--muted); }
+.empty b { display: block; color: var(--ink); margin-bottom: 4px; }
+.more { background: none; border: 0; color: var(--muted); text-decoration: underline; min-height: 44px; cursor: pointer; }
+
+form.check { display: grid; gap: 10px; }
+label { font-size: 13px; font-weight: 500; display: grid; gap: 4px; }
+input, textarea { font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; width: 100%; }
+textarea { min-height: 150px; resize: vertical; }
+.result { display: grid; gap: 12px; }
+.est { display: flex; align-items: center; gap: 12px; }
+
+.me .qa:first-child { border-top: 0; }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg);
+  padding: 10px 16px; border-radius: 99px; font-size: 14px; z-index: 9; max-width: calc(100% - 32px); }
+@media (prefers-reduced-motion: no-preference) { .meter i { transition: width .3s; } }
+</style>
+
+<header class="bar"><div class="wrap">
+  <div class="brand"><h1>Apply Kit</h1><span class="stat" id="stat"></span></div>
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+</div></header>
+<div class="wrap"><main id="main"></main></div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function () {
+  "use strict";
+  var state = { db: null, sample: null, jobs: [], me: null, tab: "todo", open: {}, showSkip: false, ready: false, dbMissing: false };
+  var $ = function (s) { return document.querySelector(s); };
+
+  function h(tag, attrs) {
+    var el = document.createElement(tag);
+    for (var k in (attrs || {})) {
+      var v = attrs[k];
+      if (v == null || v === false) continue;
+      if (k === "class") el.className = v;
+      else if (k.slice(0, 2) === "on") el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v === true ? "" : v);
+    }
+    (function add(list) {
+      for (var i = 0; i < list.length; i++) {
+        var c = list[i];
+        if (c == null || c === false) continue;
+        if (Array.isArray(c)) { add(c); continue; }
+        el.append(c.nodeType ? c : document.createTextNode(String(c)));
+      }
+    })(Array.prototype.slice.call(arguments, 2));
+    return el;
+  }
+
+  var toastTimer;
+  function toast(msg) {
+    var t = $("#toast"); t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.hidden = true; }, 1800);
+  }
+  function copy(text, label) {
+    function fallback() {
+      var ta = h("textarea", { "aria-hidden": "true", style: "position:fixed;opacity:0;left:0;top:0" });
+      ta.value = text; document.body.append(ta); ta.focus(); ta.select();
+      var ok = false; try { ok = document.execCommand("copy"); } catch (e) {}
+      ta.remove(); toast(ok ? "Copied " + label : "Press and hold to copy");
+    }
+    try { navigator.clipboard.writeText(text).then(function () { toast("Copied " + label); }, fallback); }
+    catch (e) { fallback(); }
+  }
+
+  function safeUrl(u) { return /^https:\/\//i.test(u || "") ? u : ""; }
+  var BOARDS = [["linkedin.com", "LinkedIn"], ["indeed.com", "Indeed"], ["bayt.com", "Bayt"], ["glassdoor.com", "Glassdoor"],
+    ["gulftalent.com", "GulfTalent"], ["naukri", "Naukrigulf"]];
+  function hostInfo(job) {
+    var u = safeUrl(job.applyUrl) || safeUrl(job.url);
+    if (!u) return { url: "", label: "", board: false };
+    var host = ""; try { host = new URL(u).hostname.toLowerCase(); } catch (e) {}
+    for (var i = 0; i < BOARDS.length; i++) if (host.indexOf(BOARDS[i][0]) > -1) return { url: u, label: BOARDS[i][1], board: true };
+    return { url: u, label: "company site", board: false };
+  }
+  function recClass(r) { r = (r || "").toUpperCase(); return r.indexOf("APPLY") === 0 ? "good" : r.indexOf("REVIEW") === 0 ? "warn" : "bad"; }
+  function recWord(r) { r = (r || "").toUpperCase(); return r.indexOf("APPLY") === 0 ? "Apply" : r.indexOf("REVIEW") === 0 ? "Review" : "Skip"; }
+  function isoToday() { var d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+  function addBusiness(iso, n) {
+    var d = new Date(iso + "T12:00:00");
+    while (n > 0) { d.setDate(d.getDate() + 1); if (d.getDay() !== 0 && d.getDay() !== 6) n--; }
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  function fmt(iso) { try { return new Date(iso + "T12:00:00").toLocaleDateString(undefined, { day: "numeric", month: "short" }); } catch (e) { return iso; } }
+
+  function docId(job) { return "job_" + job.id; }
+  function save(job, patch) {
+    if (!state.db) { toast("Sign in to Claude to save"); return Promise.resolve(); }
+    return state.db.doc("jobs/" + docId(job)).update(patch).catch(function (e) {
+      toast(e && e.code === "invalid_argument" ? "You don't have permission to edit" : "Could not save, try again");
+    });
+  }
+
+  function isOpen(j) { return j.status !== "Applied" && j.status !== "Closed" && j.status !== "Rejected"; }
+
+  /* ---------- tabs ---------- */
+  var TABS = [["todo", "To apply"], ["applied", "Applied"], ["check", "Add job"], ["me", "Me"]];
+  function renderTabs() {
+    var counts = { todo: state.jobs.filter(isOpen).length, applied: state.jobs.filter(function (j) { return j.status === "Applied"; }).length };
+    var nav = $("#tabs"); nav.textContent = "";
+    TABS.forEach(function (t) {
+      var b = h("button", { role: "tab", "aria-selected": String(state.tab === t[0]), onclick: function () { state.tab = t[0]; render(); window.scrollTo(0, 0); } }, t[1]);
+      if (counts[t[0]] != null) b.append(h("span", { class: "n" }, counts[t[0]]));
+      nav.append(b);
+    });
+    var due = state.jobs.filter(function (j) { return j.status === "Applied" && j.followUp && j.followUp <= isoToday(); }).length;
+    $("#stat").textContent = due ? due + " follow-up" + (due > 1 ? "s" : "") + " due" : counts.applied + " applied";
+  }
+
+  /* ---------- job card ---------- */
+  function copyBlock(title, text, label, open) {
+    var body = h("pre", { class: "txt" }, text);
+    body.hidden = !open;
+    var toggle = h("button", { class: "btn small", onclick: function () { body.hidden = !body.hidden; toggle.textContent = body.hidden ? "Show" : "Hide"; } }, open ? "Hide" : "Show");
+    return h("div", { class: "blk" },
+      h("div", { class: "bh" }, h("span", null, title),
+        h("div", { class: "actions" }, toggle, h("button", { class: "btn small primary", onclick: function () { copy(text, label); } }, "Copy"))),
+      body);
+  }
+  function answersBlock(answers) {
+    var wrap = h("div", { class: "blk" }, h("div", { class: "bh" }, h("span", null, "Screening answers")));
+    answers.forEach(function (a) {
+      wrap.append(h("div", { class: "qa" },
+        h("div", { class: "q" }, a.q),
+        a.a ? h("div", { class: "row" }, h("div", { class: "a" }, a.a),
+                h("button", { class: "btn small", onclick: function () { copy(a.a, "answer"); } }, "Copy"))
+            : h("div", { class: "a warn" }, a.needs || "Answer this yourself.")));
+    });
+    return wrap;
+  }
+
+  function detail(j) {
+    var info = hostInfo(j), kit = j.kit;
+    var d = h("div", { class: "detail" });
+    var acts = h("div", { class: "actions" });
+    if (info.url) acts.append(h("a", { class: "btn primary", href: info.url, target: "_blank", rel: "noopener noreferrer" }, "Open on " + info.label));
+    if (j.status === "Applied") {
+      acts.append(h("button", { class: "btn", onclick: function () { save(j, { status: j.prevStatus || "New", appliedOn: "", followUp: "" }); } }, "Undo applied"));
+    } else {
+      acts.append(h("button", { class: "btn", onclick: function () {
+        var today = isoToday();
+        save(j, { status: "Applied", prevStatus: j.status, appliedOn: today, followUp: addBusiness(today, 5) }).then(function () { toast("Marked applied. Follow-up " + fmt(addBusiness(today, 5))); });
+      } }, "I applied"));
+      acts.append(h("button", { class: "btn", onclick: function () { save(j, { status: "Closed", prevStatus: j.status }).then(function () { toast("Skipped"); }); } }, "Skip"));
+    }
+    d.append(acts);
+    if (info.board) d.append(h("p", { class: "note" }, "You apply on " + info.label + " yourself, in the app or the site. Copy the answers below into its form, and paste the cover letter if it asks for one. Nothing here applies for you."));
+    else if (info.url) d.append(h("p", { class: "note" }, "Check this is the employer's own page before you enter anything."));
+    else d.append(h("p", { class: "note" }, "No link saved for this job."));
+    if (j.concerns && j.concerns.length) {
+      var ul = h("ul", { class: "warnlist" }); j.concerns.forEach(function (c) { ul.append(h("li", null, c)); });
+      d.append(h("div", null, h("div", { class: "tag warn", style: "margin-bottom:6px" }, "Check before applying"), ul));
+    }
+    if (j.matching && j.matching.length) d.append(h("div", null, h("div", { class: "tag", style: "margin-bottom:6px" }, "Your matching skills"),
+      h("div", { class: "chips" }, j.matching.map(function (m) { return h("span", null, m); }))));
+    if (j.missing && j.missing.length) d.append(h("div", null, h("div", { class: "tag warn", style: "margin-bottom:6px" }, "Not on your CV (not claimed)"),
+      h("div", { class: "chips miss" }, j.missing.map(function (m) { return h("span", null, m); }))));
+    if (kit) {
+      d.append(copyBlock("Cover letter", kit.coverLetter, "cover letter", true));
+      d.append(answersBlock(kit.answers || []));
+      d.append(copyBlock("Tailored CV (text)", kit.cv, "CV text", false));
+    } else if (j.estimate) {
+      /* pasted job: kit saved under j.kit when created */
+    } else {
+      d.append(h("p", { class: "note" }, "Low match, so no kit was prepared. Ask Claude to prepare one if you still want it."));
+    }
+    return d;
+  }
+
+  function card(j) {
+    var info = hostInfo(j), open = !!state.open[j.id], cls = recClass(j.recommendation);
+    var sub = h("div", { class: "sub" }, j.location || "", j.salary ? j.salary : "");
+    var el = h("div", { class: "card" },
+      h("button", { class: "head", "aria-expanded": String(open), onclick: function () { state.open[j.id] = !state.open[j.id]; render(); } },
+        h("div", { class: "co" }, j.company),
+        h("div", { class: "ti" }, j.title),
+        sub,
+        h("div", { class: "score " + cls }, h("b", null, j.match), h("div", { class: "meter" }, h("i", { style: "width:" + Math.max(0, Math.min(100, j.match)) + "%" })),
+          h("div", { class: "tag", style: "margin-top:6px" }, recWord(j.recommendation)))));
+    if (j.status === "Applied") sub.append(h("span", { class: "pill" }, "Applied " + fmt(j.appliedOn || isoToday())));
+    if (j.source && /linkedin/i.test(j.source)) sub.append(h("span", { class: "pill" }, "LinkedIn"));
+    if (open) el.append(detail(j));
+    return el;
+  }
+
+  /* ---------- tab bodies ---------- */
+  function emptyState(title, body) { return h("div", { class: "empty" }, h("b", null, title), body); }
+
+  function renderTodo(main) {
+    var jobs = state.jobs.filter(isOpen).sort(function (a, b) { return b.match - a.match; });
+    if (!jobs.length) { main.append(emptyState(state.ready ? "Nothing to apply for" : "Loading your jobs", state.ready ? "Ask Claude to search for new jobs, or use Add job to paste one from LinkedIn." : "One moment.")); return; }
+    var good = jobs.filter(function (j) { return recWord(j.recommendation) !== "Skip"; });
+    var skip = jobs.filter(function (j) { return recWord(j.recommendation) === "Skip"; });
+    var list = h("div", { class: "list" }); good.forEach(function (j) { list.append(card(j)); });
+    main.append(list);
+    if (skip.length) {
+      main.append(h("button", { class: "more", onclick: function () { state.showSkip = !state.showSkip; render(); } }, (state.showSkip ? "Hide " : "Show ") + skip.length + " low matches"));
+      if (state.showSkip) { var l2 = h("div", { class: "list" }); skip.forEach(function (j) { l2.append(card(j)); }); main.append(l2); }
+    }
+  }
+
+  function renderApplied(main) {
+    var jobs = state.jobs.filter(function (j) { return j.status === "Applied"; }).sort(function (a, b) { return (a.followUp || "").localeCompare(b.followUp || ""); });
+    if (!jobs.length) { main.append(emptyState("No applications yet", "After you apply, tap I applied on the job. It records the date and sets a follow-up five business days later.")); return; }
+    var list = h("div", { class: "list" });
+    jobs.forEach(function (j) {
+      var c = card(j), due = j.followUp && j.followUp <= isoToday();
+      c.querySelector(".sub").append(h("span", { class: "pill" + (due ? " due" : "") }, (due ? "Follow up now · " : "Follow up ") + fmt(j.followUp || isoToday())));
+      list.append(c);
+    });
+    main.append(list);
+  }
+
+  function renderMe(main) {
+    var me = state.me;
+    if (!me) { main.append(emptyState(state.ready ? "Details not loaded" : "Loading", state.ready ? "Ask Claude to refresh your kit." : "One moment.")); return; }
+    var rows = [["Name", me.name], ["Email", me.email], ["Phone", me.phone], ["Location", me.location], ["LinkedIn", me.linkedin],
+      ["Notice period", me.notice], ["Expected salary", me.salary], ["Work authorisation", me.workAuth], ["Relocation", me.relocation],
+      ["Certifications", (me.certifications || []).join(", ")], ["Education", (me.education || []).join(", ")]];
+    var blk = h("div", { class: "blk me" });
+    rows.forEach(function (r) {
+      if (!r[1]) return;
+      blk.append(h("div", { class: "qa" }, h("div", { class: "q" }, r[0]),
+        h("div", { class: "row" }, h("div", { class: "a" }, r[1]), h("button", { class: "btn small", onclick: function () { copy(r[1], r[0].toLowerCase()); } }, "Copy"))));
+    });
+    main.append(blk);
+    if ((me.expired || []).length) main.append(h("p", { class: "note" }, "Expired and not claimed: " + me.expired.join(", ") + "."));
+  }
+
+  /* ---------- check a pasted job (LinkedIn etc.) ---------- */
+  var checkUI = null;
+  function buildCheck() {
+    var company = h("input", { id: "ck-company", autocomplete: "off", placeholder: "Company" });
+    var title = h("input", { id: "ck-title", autocomplete: "off", placeholder: "Job title" });
+    var link = h("input", { id: "ck-link", inputmode: "url", autocomplete: "off", placeholder: "https://… link to the job" });
+    var text = h("textarea", { id: "ck-text", placeholder: "Paste the job description here" });
+    var out = h("div", { class: "result" }), btn = h("button", { class: "btn primary", type: "submit" }, "Check fit and draft letter");
+    var lastResult = null;
+    var form = h("form", { class: "check" },
+      h("p", { class: "note" }, "Found a job on LinkedIn or anywhere else? Paste it. Claude compares it with your CV and drafts a letter. You apply on the site yourself."),
+      h("label", null, "Company", company), h("label", null, "Job title", title), h("label", null, "Link (optional)", link), h("label", null, "Job description", text), btn);
+    if (!state.sample) form.append(h("p", { class: "note" }, "Asking Claude is not available in this view."));
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!state.sample || !state.me) { toast("Not available in this view"); return; }
+      if (text.value.trim().length < 80) { toast("Paste the full job description"); return; }
+      btn.disabled = true; out.textContent = ""; out.append(h("p", { class: "note" }, "Thinking…"));
+      var me = state.me;
+      var prompt = "You are helping " + me.name + " decide whether to apply for a job, and drafting a short cover letter.\n" +
+        "Use ONLY facts from the candidate CV below. Never invent employers, dates, skills, certifications, projects or numbers. A skill the job asks for that is not in the CV goes in \"missing\".\n" +
+        "Facts that matter: UAE residence visa is CANCELLED (needs employer visa sponsorship; flag postings that require an existing UAE visa or Emirates ID). Fortinet NSE7 is EXPIRED, so it is not held. " +
+        "CCNP Data Center is only the Core exam. Minimum salary expectation is AED " + me.salaryMin + " per month. Target: senior network and network-security roles, UAE first.\n" +
+        "Cover letter: under 150 words, plain language, names the exact role and company, mentions one relevant project from the CV, says in one sentence that a new UAE work visa would need to be sponsored, no clichés.\n" +
+        "Reply with only JSON: {\"match\": number 0-100, \"recommendation\": \"APPLY\"|\"REVIEW\"|\"SKIP\", \"matching\": [strings], \"missing\": [strings], \"concerns\": [strings], \"cover_letter\": string}\n\n" +
+        "CANDIDATE CV:\n" + me.cvMaster + "\n\nJOB\nCompany: " + company.value + "\nTitle: " + title.value + "\nDescription:\n" + text.value.slice(0, 12000);
+      state.sample.json(prompt, { modelTier: "default" }).then(function (r) {
+        lastResult = r; out.textContent = "";
+        var cls = recClass(r.recommendation);
+        out.append(h("div", { class: "est" }, h("div", { class: "score " + cls }, h("b", null, Math.round(Number(r.match) || 0)), h("div", { class: "tag", style: "margin-top:4px" }, recWord(r.recommendation))),
+          h("p", { class: "note" }, "Claude's estimate from your CV. The laptop agent uses stricter fixed rules, so treat this as a first look.")));
+        if ((r.concerns || []).length) { var ul = h("ul", { class: "warnlist" }); r.concerns.forEach(function (c) { ul.append(h("li", null, String(c))); }); out.append(h("div", null, h("div", { class: "tag warn", style: "margin-bottom:6px" }, "Check before applying"), ul)); }
+        if ((r.matching || []).length) out.append(h("div", { class: "chips" }, r.matching.map(function (m) { return h("span", null, String(m)); })));
+        if ((r.missing || []).length) out.append(h("div", null, h("div", { class: "tag warn", style: "margin-bottom:6px" }, "Not on your CV (not claimed)"), h("div", { class: "chips miss" }, r.missing.map(function (m) { return h("span", null, String(m)); }))));
+        out.append(copyBlock("Cover letter draft", String(r.cover_letter || ""), "cover letter", true));
+        out.append(answersBlock(me.answers || []));
+        var saveBtn = h("button", { class: "btn", type: "button", onclick: function () {
+          if (!state.db) { toast("Sign in to Claude to save"); return; }
+          var id = "li_" + Date.now().toString(36);
+          var doc = { id: id, company: company.value || "Unknown company", title: title.value || "Job", location: "", salary: "", experience: "", match: Math.round(Number(r.match) || 0),
+            status: "New", source: /linkedin/i.test(link.value) ? "LinkedIn (pasted)" : "Pasted", posted: "", url: safeUrl(link.value.trim()), applyUrl: "", appliedOn: "", followUp: "",
+            recommendation: String(r.recommendation || "REVIEW"), concerns: (r.concerns || []).map(String), matching: (r.matching || []).map(String), missing: (r.missing || []).map(String),
+            estimate: true, kit: { coverLetter: String(r.cover_letter || ""), cv: me.cvMaster, answers: me.answers || [] } };
+          saveBtn.disabled = true;
+          state.db.doc("jobs/job_" + id).set(doc).then(function () { toast("Saved to To apply"); state.tab = "todo"; state.open[id] = true; render(); },
+            function () { saveBtn.disabled = false; toast("Could not save, try again"); });
+        } }, "Save to my list");
+        out.append(saveBtn);
+      }).catch(function (e) {
+        out.textContent = "";
+        var m = { not_granted: "Allow Claude for this page to use this.", rate_limited: "Too many requests. Try again in a minute.", invalid_json: "Claude's reply could not be read. Try again.", cancelled: "Stopped." };
+        out.append(h("p", { class: "note warn" }, (e && m[e.code]) || "Something went wrong. Try again."));
+      }).then(function () { btn.disabled = false; });
+    });
+    return { form: form, out: out };
+  }
+  function renderCheck(main) {
+    if (!checkUI) checkUI = buildCheck();
+    main.append(checkUI.form, checkUI.out);
+  }
+
+  /* ---------- render ---------- */
+  function render() {
+    renderTabs();
+    var main = $("#main");
+    if (state.tab === "check" && checkUI && main.contains(checkUI.form)) { return; } /* keep typed text */
+    main.textContent = "";
+    if (state.dbMissing) { main.append(emptyState("Sign in to see your jobs", "Open this page from your Claude account so it can load your tracker.")); }
+    if (state.tab === "todo") renderTodo(main);
+    else if (state.tab === "applied") renderApplied(main);
+    else if (state.tab === "me") renderMe(main);
+    else renderCheck(main);
+  }
+
+  /* ---------- data ---------- */
+  function start() {
+    render();
+    if (!window.claude || !window.claude.use) { state.dbMissing = true; state.ready = true; render(); return; }
+    window.claude.use("sample").then(function (s) { state.sample = s; if (state.tab === "check") { checkUI = null; render(); } }, function () {});
+    window.claude.use("db").then(function (db) {
+      if (!db) { state.dbMissing = true; state.ready = true; render(); return; }
+      state.db = db;
+      db.collection("jobs").onSnapshot(function (snap) {
+        state.jobs = snap.docs.map(function (d) { return d.data(); }).filter(function (d) { return d && d.company; });
+        state.ready = true; render();
+      }, function () { state.ready = true; render(); });
+      db.doc("profile/me").onSnapshot(function (snap) { state.me = snap.exists ? snap.data() : null; render(); }, function () {});
+    }, function () { state.dbMissing = true; state.ready = true; render(); });
+  }
+  start();
+})();
+</script>
