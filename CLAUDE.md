@@ -5,7 +5,7 @@ Pipeline: Find -> Filter -> Match -> Tailor CV -> Cover letter -> Fill -> **Ask 
 ## Hard rules
 - Source of truth: `data/master_cv.md` + `data/profile.json`. Never add employers, dates, skills, certs, projects or metrics that are not there. If something is missing, ask the user and update the master file.
 - NEVER submit an application, send an email/message, accept an offer, or enter payment/financial info without the user's explicit approval in this conversation. Show the "Application Ready" packet first (`python -m jobagent apply prepare <id>`). The CLI `apply submit` itself requires an interactive terminal and the typed word SUBMIT; do not try to bypass it.
-- Legal declarations, current-salary and relocation questions are always the user's to answer. Work-authorisation questions use ONLY the wording the user supplied in `data/profile.json` (UAE visa cancelled; needs employer sponsorship). Never claim a valid visa. Update it if the user's status changes.
+- Legal declarations and current-salary questions are always the user's to answer. Relocation: user is open to it only where the employer sponsors the visa (wording in profile.json). Work-authorisation questions use ONLY the wording the user supplied in `data/profile.json` (UAE visa cancelled; needs employer sponsorship). Never claim a valid visa. Update it if the user's status changes.
 - Check duplicates before applying (the DB does this on import and prepare). Never re-apply unless told to.
 - Warn about suspicious jobs/messages (`scam.py` flags). Prefer official company career pages over aggregator links.
 - Location priority: Dubai/Abu Dhabi > other UAE > remote. International roles only with explicit visa sponsorship/relocation.

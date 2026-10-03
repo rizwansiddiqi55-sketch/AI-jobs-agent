@@ -223,7 +223,9 @@ class Approval(unittest.TestCase):
         self.assertIn("cancelled", a)
         a, s = ap.answer_question("Do you require visa sponsorship?", PROFILE)
         self.assertTrue(a.startswith("Yes"))
-        self.assertEqual(ap.answer_question("Are you willing to relocate?", PROFILE)[1], "needs_answer")
+        a, s = ap.answer_question("Are you willing to relocate?", PROFILE)
+        self.assertEqual(s, "auto")
+        self.assertIn("sponsor", a)
 
     def test_submit_needs_tty_and_phrase(self):
         ap.prepare(self.con, self.id, ["Notice period?"], draft=True)
