@@ -56,6 +56,7 @@ SKILLS = {
     "python automation": [r"\bpython\b", r"\bansible\b", r"\bnetmiko\b", r"\bnapalm\b", r"\bterraform\b"],
     "cloud networking": [r"\baws\b", r"\bazure\b", r"\bgcp\b", r"cloud networking", r"\bvpc\b(?=.*cloud)"],
     "vmware nsx": [r"\bnsx\b"],
+    "ot/ics security": [r"\bics\b", r"\bot\b(?=.{0,40}(cyber|security))", r"\bscada\b", r"industrial (control|cyber|automation|firewall)", r"iec[ /-]?62443", r"isa[ /-]?(iec[ /-]?)?62443", r"control system"],
     "itil": [r"\bitil\b", r"service management", r"\bservicenow\b"],
 }
 
@@ -74,6 +75,7 @@ CERTS = {
     "CEH": [r"\bceh\b"],
     "CompTIA Security+": [r"security\+", r"\bsec\+"],
     "ITIL": [r"\bitil\b"],
+    "GICSP / ISA-IEC 62443": [r"\bgicsp\b", r"iec[ /-]?62443", r"isa[ /-]?(iec[ /-]?)?62443", r"\bgrid\b.{0,10}\bgicsp\b"],
     "AWS cert": [r"aws certified"],
     "Azure cert": [r"\baz-\d{3}\b", r"azure certified"],
 }

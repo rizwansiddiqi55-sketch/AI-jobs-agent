@@ -233,6 +233,9 @@ def score(job: dict, profile: dict) -> Match:
         total = min(total, 59)
     if req_unmet:
         total = min(total, 79)
+    if "ot/ics security" in (req | pref) and "ot/ics security" not in have:
+        concerns.append("Core domain is OT/industrial control systems security, which is not on your CV")
+        total = min(total, 59)  # a different specialism: generic firewall/switching words must not make it look like a fit
     if sysadmin:
         total = min(total, 70)
     if salary_gap == "far":
@@ -263,6 +266,8 @@ def recommend(total: float, concerns: list, hard_skip: bool, loc_kind: str, sala
         return "SKIP for now - posting requires an existing UAE visa/Emirates ID (ask the employer first if you still want it)"
     if salary_gap == "far":
         return "SKIP - advertised pay far below your minimum"
+    if total < 65:
+        return "SKIP - weak match unless you see something the description misses"
     if salary_gap == "below":
         return "REVIEW - good fit but advertised pay is below your minimum; apply only if negotiable"
     if req_certs_unmet:

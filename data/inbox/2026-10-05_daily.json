@@ -1,0 +1,59 @@
+[
+ {
+  "company": "Total Technology L.L.C-FZ",
+  "title": "L1 Network & Cyber Security Operations Engineer",
+  "location": "Dubai, UAE",
+  "url": "https://to.indeed.com/aap8rbdtwhsq",
+  "job_ref": "JOBSEARCH_100245",
+  "posted_date": "2026-09-29",
+  "salary": "AED 4,000 - 5,000 per month",
+  "experience_required": "1-2 years",
+  "source": "Indeed",
+  "description": "L1 Network & Cyber Security Operations Engineer, Dubai on-site, rotational 24/7 shifts. Monitor client networks (Auvik), investigate security alerts (Microsoft Defender, Huntress SIEM, Heimdal, Cisco Umbrella), troubleshoot following approved procedures, escalate to senior engineers, use Datto RMM.\nWhat you'll bring: around 1-2 years of experience in network support, cybersecurity, a NOC/SOC or managed IT services; TCP/IP, DNS, DHCP, routing, switching, VLANs, firewalls, VPNs, wireless; basic knowledge of cyber threats and log analysis. CCNA, CompTIA Network+, Security+ or Microsoft security certifications desirable."
+ },
+ {
+  "company": "AZ I Technology",
+  "title": "System and Network Engineer",
+  "location": "Dubai, UAE",
+  "url": "https://to.indeed.com/aaqc4lgs2hcn",
+  "job_ref": "JOBSEARCH_100235",
+  "posted_date": "2026-10-01",
+  "salary": "Up to AED 5,000 per month",
+  "experience_required": "3-5 years",
+  "source": "Indeed",
+  "description": "Systems and Network Engineer. Urgent hiring; valid UAE driving licence preferred. System maintenance and support, end-user technical support, project documentation, continuous improvement.\nQualifications: Bachelor's degree; 3-5 years in systems or network engineering; operating systems (Windows, Mac); cloud platforms (O365, AWS, Azure); familiarity with CCTV, PABX and structured cabling; design and deploy LAN, WAN, WLAN, VPN; configure routers, switches, firewalls, load balancers, VPN, Wi-Fi. Preferred certifications: CCNA, Fortinet NSE4 or greater, MCSE, AWS Solutions Architect."
+ },
+ {
+  "company": "DICETEK LLC",
+  "title": "Network Engineer (Hybrid Infrastructure & Cloud)",
+  "location": "Dubai, UAE",
+  "url": "https://to.indeed.com/aaslrfjmlcsy",
+  "job_ref": "JOBSEARCH_100276",
+  "posted_date": "2026-08-25",
+  "experience_required": "7-10 years",
+  "source": "Indeed",
+  "description": "Contract role. 7-10 years of experience in enterprise network and security environments, preferably Banking, Financial Services or regulated industries. Manage network and security: routers, switches, firewalls, firmware upgrades, hardening; Azure hub-and-spoke network connectivity, VPN gateways, ExpressRoute, NSGs; cloud firewall policies; security vulnerability assessments; coordinate managed service providers (SOC/NOC); RCA, QoS tuning, routing optimisation, firewall rule cleanup; documentation, CAB meetings; level 2/3 support; on-call and shift-based operations.\nEssential: Bachelor's degree in computer science, IT, network engineering or cybersecurity. Desirable: CCNA mandatory or strongly preferred; CCNP an advantage; Fortinet NSE (NSE 4 / NSE 5 / NSE 7) or equivalent firewall certification; TCP/IP, VLANs, routing, switching, VPN, firewalls, IPS/IDS, WAF, Zero Trust, SIEM-based monitoring; Azure networking and hybrid cloud connectivity."
+ },
+ {
+  "company": "ALIGNED EDGES HOLDING",
+  "title": "Network Security Engineer",
+  "location": "Abu Dhabi, UAE",
+  "url": "https://to.indeed.com/aagw6f88ncg7",
+  "job_ref": "JOBSEARCH_100262",
+  "posted_date": "2026-08-25",
+  "salary": "AED 9,000 - 12,000 per month",
+  "source": "Indeed",
+  "description": "IT Network Engineer: technical systems and user support for clients; troubleshoot client network and Wi-Fi issues; configure, deploy and manage routers, switches, firewalls and other network appliances; review logs and performance data. Candidates must hold relevant networking certifications, preferably Cisco-certified, Microsoft, HP Aruba. Preferred technical expertise: ACMP, CCNA, Routing, Switching, Firewall, Security, IP Telephony, Wireless, MPLS, VPN, Infrastructure."
+ },
+ {
+  "company": "Wood",
+  "title": "Lead Engineer – OT Cyber Security",
+  "location": "Abu Dhabi, UAE",
+  "url": "https://to.indeed.com/aa7gjmyjwdby",
+  "job_ref": "JOBSEARCH_100269",
+  "posted_date": "2026-08-31",
+  "experience_required": "10+ years",
+  "source": "Indeed",
+  "description": "Lead OT Cyber Security Engineer advising customers in the energy and materials industries on industrial control system (ICS) cybersecurity: gap assessments per NIST, ISA 27001 and ISA/IEC-62443, OT cybersecurity resilience roadmaps, risk assessments, proposals and business development, representing the company in industry forums.\nEssential: 10 plus years' experience in a similar role; IT/OT cybersecurity management systems and risk assessments; hands-on experience specifying and implementing industrial firewalls and deploying security solutions; configuring switches, routers and firewalls; exposure to control system vendors and industrial networking equipment. Qualifications: degree in engineering, science, computer science or mathematics; relevant IEC/ISA, GICSP or similar certification."
+ }
+]

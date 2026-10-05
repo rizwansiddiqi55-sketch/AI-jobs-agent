@@ -146,6 +146,15 @@ class Matching(unittest.TestCase):
         self.assertGreaterEqual(m.score, 80)
         self.assertTrue(any("possibly below your level" in c for c in m.concerns))
 
+    def test_ot_ics_role_is_a_different_specialism(self):
+        d = ("Lead OT Cyber Security Engineer for industrial control systems. IEC 62443 gap assessments. "
+             "Hands-on experience configuring switches, routers and firewalls. Relevant IEC/ISA, GICSP certification is essential.")
+        m = matcher.score({**GOOD, "title": "Lead Engineer - OT Cyber Security", "description": d, "salary": ""}, PROFILE)
+        self.assertLessEqual(m.score, 59)
+        self.assertTrue(any("OT/industrial" in c for c in m.concerns))
+        self.assertTrue(any(c.startswith("REQUIRED certification") and "GICSP" in c for c in m.concerns))
+        self.assertTrue(m.recommendation.startswith("SKIP"))
+
     def test_scam_capped(self):
         m = matcher.score({**GOOD, "description": "Pay a registration fee. WhatsApp only."}, PROFILE)
         self.assertLessEqual(m.score, 20)
@@ -422,6 +431,15 @@ class DailyUpdate(unittest.TestCase):
         self.assertEqual([j["company"] for j in res["new"]], ["Delta"])
         self.assertEqual(len(res["duplicates"]), 3)  # same company+title re-posted with a new link is still a duplicate
         self.assertEqual((len(res["too_old"]), len(res["not_relevant"])), (1, 2))
+
+    def test_rescore_never_touches_restored_jobs_without_a_description(self):
+        from jobagent import restore
+        con = fresh_db()
+        restore.restore(con, str(self._kit_dir()))
+        before = con.execute("SELECT id, match_pct FROM jobs ORDER BY id").fetchall()
+        importer.rescore(con)
+        after = con.execute("SELECT id, match_pct FROM jobs ORDER BY id").fetchall()
+        self.assertEqual([tuple(r) for r in before], [tuple(r) for r in after])
 
     def test_new_jobs_continue_numbering_and_kit_new_only_exports_them(self):
         from jobagent import restore
