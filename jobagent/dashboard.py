@@ -36,7 +36,7 @@ def to_markdown(rows) -> str:
                       *("| " + " | ".join(esc(c) for c in r) + " |" for r in m[1:])]) + "\n"
 
 
-def to_html(rows, kit_url: str = "") -> str:
+def to_html(rows, kit_url: str = "", nav_html: str = "") -> str:
     """Self-contained dashboard page. With kit_url, every row links to that job's card in the Apply Kit
     (the page there opens '#job-<id>'). The page holds no CV, phone or email."""
     m = rows_to_matrix(rows)
@@ -59,6 +59,7 @@ def to_html(rows, kit_url: str = "") -> str:
             "body{background:var(--bg);color:var(--fg);font:14px system-ui,sans-serif;margin:0;padding:16px}"
             "h2{margin:0 0 12px}table{border-collapse:collapse}td,th{border:1px solid var(--line);padding:6px 10px;text-align:left}"
             "th{background:var(--head)}a{color:var(--accent)}.wrap{overflow-x:auto}"
+            "nav{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}nav a{border:1px solid var(--line);border-radius:999px;padding:6px 12px;text-decoration:none;font-size:13px}nav a.on{background:var(--accent);color:var(--ink);border-color:var(--accent);font-weight:600}"
             ".btn,.kit{display:inline-block;background:var(--accent);color:var(--ink);padding:10px 16px;border-radius:8px;text-decoration:none;font-weight:600}"
             ".kit{padding:6px 10px;white-space:nowrap;font-size:13px}.hint{color:var(--muted);font-size:13px;margin-left:8px}</style>"
-            f"<h2>Job Dashboard - {date.today()}</h2>{top}<div class='wrap'><table><tr>{head}</tr>{body}</table></div>")
+            f"{nav_html}<h2>Job Dashboard - {date.today()}</h2>{top}<div class='wrap'><table><tr>{head}</tr>{body}</table></div>")

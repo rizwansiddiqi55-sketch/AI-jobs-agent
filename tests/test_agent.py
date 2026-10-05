@@ -13,7 +13,7 @@ os.environ["JOBAGENT_HOME"] = _home
 for f in ("profile.json", "master_cv.md"):
     shutil.copy(ROOT / "data" / f, _home)
 
-from jobagent import apply as ap, config, db, importer, matcher, recruiter, scam, tailor  # noqa: E402
+from jobagent import apply as ap, config, countries, db, importer, matcher, recruiter, scam, tailor  # noqa: E402
 from jobagent.salary import parse_aed_monthly  # noqa: E402
 
 PROFILE = config.load_profile()
@@ -486,6 +486,35 @@ class Import(unittest.TestCase):
         s2 = importer.ingest(con, importer.load_file(str(ROOT / "data/samples/sample_jobs.json")))
         self.assertEqual(s2["added"], 0)
         self.assertEqual(len(s2["duplicates"]), 4)
+
+
+class Countries(unittest.TestCase):
+    def test_country_of(self):
+        self.assertEqual(countries.country_of("Dubai, UAE"), "uae")
+        self.assertEqual(countries.country_of("Abu Dhabi"), "uae")
+        self.assertEqual(countries.country_of("Remote"), "uae")
+        self.assertEqual(countries.country_of("Cork, Ireland"), "ireland")
+
+    def test_openings_valid(self):
+        d = countries.load_openings()
+        for o in d["openings"]:
+            self.assertIn(o["country"], countries.BY_NAME)
+            self.assertIn(o["sponsorship"], ("yes", "no", "not stated"))
+            self.assertIn(o["fit"], ("strong", "partial", "blocked"))
+            self.assertTrue(o["url"].startswith("https://"))
+            if o["sponsorship"] == "no":
+                self.assertEqual(o["fit"], "blocked")  # never suggest a role that refuses sponsorship
+
+    def test_build_site(self):
+        out = Path(tempfile.mkdtemp())
+        written = countries.build_site([], out)
+        self.assertEqual(len(written), 1 + len(countries.COUNTRIES))
+        for c in countries.COUNTRIES:
+            page = (out / "countries" / f"{c['slug']}.html").read_text(encoding="utf-8")
+            self.assertIn("noindex", page)
+            self.assertIn("official sites", page)
+            self.assertNotIn("@", page.replace("@media", ""))  # no email addresses
+        shutil.rmtree(out)
 
 
 if __name__ == "__main__":

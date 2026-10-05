@@ -6,7 +6,7 @@ from datetime import date
 from pathlib import Path
 
 from . import apply as apply_mod
-from . import config, dashboard, db, importer, kit, matcher, recruiter, restore, scam, tailor
+from . import config, countries, dashboard, db, importer, kit, matcher, recruiter, restore, scam, tailor
 
 
 def _rows(con, where="1=1", args=()):
@@ -177,6 +177,10 @@ def cmd_export(a, con):
     rows = _rows(con, "id > 0")  # phone-only jobs (negative ids) have no laptop row to link
     out = Path(a.out)
     kit_url = config.load_profile().get("apply_kit_url", "")
+    if getattr(a, "countries", False):
+        for p in countries.build_site(rows, out.parent, kit_url):
+            print("wrote", p)
+        return
     render = {"md": dashboard.to_markdown, "html": lambda r: dashboard.to_html(r, kit_url)}[out.suffix[1:]]
     out.write_text(render(rows), encoding="utf-8")
     print("wrote", out)
@@ -220,7 +224,7 @@ def build_parser():
     s = sp.add_parser("followups", help="applications due for follow-up"); s.set_defaults(f=cmd_followups)
     s = sp.add_parser("followup-draft", help="draft (not send) a follow-up email"); s.add_argument("id", type=int); s.set_defaults(f=cmd_followup_draft)
     s = sp.add_parser("recruiter", help="classify a recruiter message and draft a reply"); s.add_argument("file", nargs="?"); s.set_defaults(f=cmd_recruiter)
-    s = sp.add_parser("export", help="export dashboard (.md or .html)"); s.add_argument("out"); s.set_defaults(f=cmd_export)
+    s = sp.add_parser("export", help="export dashboard (.md or .html)"); s.add_argument("out"); s.add_argument("--countries", action="store_true", help="also write countries/<slug>.html next to out (site build)"); s.set_defaults(f=cmd_export)
     s = sp.add_parser("history", help="audit trail for a job"); s.add_argument("id", type=int); s.set_defaults(f=cmd_history)
     return p
 
