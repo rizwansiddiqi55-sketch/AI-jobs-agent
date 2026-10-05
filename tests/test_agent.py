@@ -233,8 +233,19 @@ class Tailoring(unittest.TestCase):
         t = tailor.cover_letter(GOOD, PROFILE, ["fortinet", "switching"], master)
         self.assertNotIn("centres on Fortinet", t)
         self.assertIn("enterprise network and security operations", t)
-        t2 = tailor.cover_letter(GOOD, PROFILE, ["fortinet", "palo alto", "bgp"], master)
-        self.assertIn("centres on Palo Alto, Fortinet", t2)
+        stressed = {**GOOD, "description": "Palo Alto firewalls (Panorama). Palo Alto policies. Fortinet FortiGate. Fortinet HA. BGP."}
+        t2 = tailor.cover_letter(stressed, PROFILE, ["fortinet", "palo alto", "bgp"], master)
+        self.assertIn("centres on", t2)
+        self.assertIn("Palo Alto", t2.split("centres on")[1].split(".")[0])
+
+    def test_letter_focus_follows_what_the_posting_stresses(self):
+        job = {**GOOD, "title": "Network Engineer (Hybrid Infrastructure & Cloud)",
+               "description": "Design Azure network connectivity, hub and spoke, cloud networking governance, secure cloud network "
+                              "architectures, cloud firewall policies. Firewalls, IPS and VPN gateways. Desirable: Fortinet NSE 4."}
+        t = tailor.cover_letter(job, PROFILE, ["fortinet", "firewall", "cloud networking", "vpn"], (ROOT / "data" / "master_cv.md").read_text())
+        focus = t.split("centres on")[1].split(".")[0]
+        self.assertIn("cloud and hybrid networking", focus)
+        self.assertNotIn("Fortinet", focus)  # named once, only as a desirable certification
 
     def test_letter_has_company_and_title(self):
         master = (ROOT / "data" / "master_cv.md").read_text()

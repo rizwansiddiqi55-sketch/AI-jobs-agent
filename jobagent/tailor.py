@@ -151,9 +151,9 @@ def tailor_cv(master_text: str, job: dict) -> tuple[str, dict]:
 
 
 PRIORITY = ["cisco ise", "clearpass", "nac", "cisco ftd", "cisco asa", "palo alto", "fortinet", "sd-wan",
-            "bgp", "ospf", "mpls", "cisco wlc", "catalyst center", "cisco catalyst", "aruba", "wireless",
-            "firewall", "network security", "cisco"]
-PRETTY = {"cisco": "Cisco", "fortinet": "Fortinet", "palo alto": "Palo Alto", "sd-wan": "SD-WAN", "bgp": "BGP",
+            "cloud networking", "zero trust", "bgp", "ospf", "mpls", "cisco wlc", "catalyst center", "cisco catalyst",
+            "aruba", "wireless", "vpn", "firewall", "network security", "cisco"]
+PRETTY = {"cloud networking": "cloud and hybrid networking", "zero trust": "Zero Trust", "vpn": "VPN", "cisco": "Cisco", "fortinet": "Fortinet", "palo alto": "Palo Alto", "sd-wan": "SD-WAN", "bgp": "BGP",
           "ospf": "OSPF", "mpls": "MPLS", "cisco ise": "Cisco ISE", "clearpass": "Aruba ClearPass",
           "cisco asa": "Cisco ASA", "cisco ftd": "Cisco Firepower (FTD)", "firewall": "firewalls",
           "network security": "network security", "aruba": "Aruba", "nac": "802.1X/NAC", "wireless": "wireless",
@@ -162,7 +162,14 @@ PRETTY = {"cisco": "Cisco", "fortinet": "Fortinet", "palo alto": "Palo Alto", "s
 
 def cover_letter(job: dict, profile: dict, matching: list, master_text: str | None = None) -> str:
     """Short factual letter. Uses only profile facts and verbatim lines from the master CV."""
-    top = [m for m in PRIORITY if m in matching][:4]
+    # Focus = the topics the posting itself mentions most (a certification named once in passing does not define the role).
+    text = f"{job.get('title', '')}\n{job.get('description', '')}".lower()
+
+    def mentions(s):
+        return sum(len(re.findall(p, text)) for p in sk.SKILLS.get(s, []))
+    ranked = sorted((m for m in PRIORITY if m in matching and mentions(m) >= 2),
+                    key=lambda m: (-mentions(m), PRIORITY.index(m)))
+    top = ranked[:4]
     # Name specific technologies only when the posting clearly centres on at least two of them.
     skill_txt = ", ".join(PRETTY[t] for t in top) if len(top) >= 2 else "enterprise network and security operations"
     avail = ("immediately" if profile["notice_period"].lower().startswith("immediate")
@@ -172,7 +179,7 @@ def cover_letter(job: dict, profile: dict, matching: list, master_text: str | No
         bp = best_project(master_text, job)
         if bp:
             title, bullet = bp
-            proj = (f"The closest example from my CV is the {title} project, where I "
+            proj = (f"On the {title} project, I "
                     f"{bullet[0].lower() + bullet[1:].rstrip('.')}.\n\n")
     visa = ""
     if profile.get("visa_status") == "cancelled" and profile.get("cover_letter_mentions_visa", True):
@@ -182,7 +189,7 @@ def cover_letter(job: dict, profile: dict, matching: list, master_text: str | No
 
 I am applying for the {job['title']} position{(' in ' + job['location']) if job.get('location') else ''}. I am a network and security engineer with {profile['years_experience']}+ years of enterprise experience, based in {profile['location'].split(',')[0]} and available {avail}.{visa}
 
-The role centres on {skill_txt}. These are the core of my work across healthcare, government, oil & gas and critical-infrastructure environments.
+The role centres on {skill_txt}. I have worked in healthcare, government, oil & gas and critical-infrastructure environments, and the closest match from my CV is below.
 
 {proj}I hold {certs}, and a BS in Computer Science. I would welcome a conversation about how I can support {job['company']}.
 
