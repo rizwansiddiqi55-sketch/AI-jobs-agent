@@ -70,17 +70,28 @@ def nav(active: str, prefix: str) -> str:
     return "<nav>" + "".join(f"<a{' class=on' if on else ''} href='{u}'>{html.escape(n)}</a>" for n, u, on in items) + "</nav>"
 
 
-def _opening(o) -> str:
+def _opening(o, row=None, kit_url: str = "") -> str:
     fit = {"strong": ("Strong match", "strong"), "partial": ("Partial match", ""), "blocked": ("Not open to you", "blocked")}[o["fit"]]
     spons = {"no": "Sponsorship: refused", "yes": "Sponsorship: offered", "not stated": "Sponsorship: not stated"}[o["sponsorship"]]
     return (f"<div class='card'><h3><a href='{html.escape(o['url'])}' rel='noopener'>{html.escape(o['title'])}</a></h3>"
             f"<div>{html.escape(o['company'])} · {html.escape(o['location'])} · {html.escape(o['type'])} · posted {html.escape(o['posted'])}</div>"
             f"<div><span class='tag {fit[1]}'>{fit[0]}</span><span class='tag'>{spons}</span></div>"
-            f"<div class='muted'>{html.escape(o['note'])}</div></div>")
+            f"<div class='muted'>{html.escape(o['note'])}</div>"
+            + (f"<p><a class='kit' href='{html.escape(kit_url)}#job-{row['id']}'>Open Apply Kit</a> "
+               f"<span class='hint'>Status: {html.escape(row['status'] or '-')}. Cover letter, tailored CV and answers.</span></p>"
+               if row is not None and kit_url else
+               "<p class='hint'>No kit: this role is not open to you.</p>" if o["fit"] == "blocked" else "")
+            + "</div>")
 
 
 def country_page(c: dict, openings: list, none_msg: str, tracker_rows: list, kit_url: str, checked: str) -> str:
+    by_url = {r["url"]: r for r in tracker_rows}
+    seen = {o["url"] for o in openings}
+    tracker_rows = [r for r in tracker_rows if r["url"] not in seen]  # matched ones show on their opening card
     sec = ""
+    if kit_url:
+        sec += (f"<p><a class='btn' href='{html.escape(kit_url)}'>Open Apply Kit</a> "
+                "<span class='hint'>Cover letters, CV text and copy-paste answers on your phone.</span></p>")
     if tracker_rows:
         sec += "<h2>Tracked jobs</h2><div class='wrap'><table><tr><th>Company</th><th>Position</th><th>Location</th><th>Match</th><th>Status</th>" + ("<th>Apply Kit</th>" if kit_url else "") + "</tr>"
         for r in tracker_rows:
@@ -91,7 +102,7 @@ def country_page(c: dict, openings: list, none_msg: str, tracker_rows: list, kit
         sec += "</table></div>"
     if openings:
         order = {"strong": 0, "partial": 1, "blocked": 2}
-        sec += f"<h2>Openings seen (checked {html.escape(checked)})</h2>" + "".join(_opening(o) for o in sorted(openings, key=lambda o: order[o["fit"]]))
+        sec += f"<h2>Openings seen (checked {html.escape(checked)})</h2>" + "".join(_opening(o, by_url.get(o["url"]), kit_url) for o in sorted(openings, key=lambda o: order[o["fit"]]))
     if not tracker_rows and not openings:
         sec += f"<h2>Openings</h2><div class='card'>{html.escape(none_msg or 'No suitable openings found yet.')}</div>"
     links = "".join(f"<li><a href='{html.escape(u)}' rel='noopener'>{html.escape(t)}</a></li>" for t, u in c["links"])

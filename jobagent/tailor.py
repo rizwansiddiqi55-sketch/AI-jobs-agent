@@ -183,7 +183,11 @@ def cover_letter(job: dict, profile: dict, matching: list, master_text: str | No
                     f"{bullet[0].lower() + bullet[1:].rstrip('.')}.\n\n")
     visa = ""
     if profile.get("visa_status") == "cancelled" and profile.get("cover_letter_mentions_visa", True):
-        visa = " I would need a new UAE work visa to be sponsored."
+        from .countries import country_of
+        if country_of(job.get("location", "")) in ("uae", "other"):
+            visa = " I would need a new UAE work visa to be sponsored."
+        else:
+            visa = " I am open to relocating, subject to the employer sponsoring a work visa."
     certs = ", ".join(profile["certifications"])
     return f"""Dear Hiring Team at {job['company']},
 

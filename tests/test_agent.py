@@ -516,6 +516,16 @@ class Countries(unittest.TestCase):
             self.assertNotIn("@", page.replace("@media", ""))  # no email addresses
         shutil.rmtree(out)
 
+    def test_kit_link_on_opening_and_relocation_wording(self):
+        o = countries.load_openings()["openings"][0]
+        row = {"id": 99, "status": "New"}
+        card = countries._opening(o, row, "https://example.com/kit")
+        self.assertIn("example.com/kit#job-99", card)
+        job = {"company": "Acme", "title": "Network Engineer", "location": "Cork, Ireland", "description": "BGP"}
+        letter = tailor.cover_letter(job, config.load_profile(), [], "")
+        self.assertNotIn("UAE work visa", letter)
+        self.assertIn("sponsoring a work visa", letter)
+
 
 if __name__ == "__main__":
     unittest.main()

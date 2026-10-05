@@ -1,0 +1,86 @@
+[
+ {
+  "company": "Career Connex (recruiter)",
+  "title": "Senior Network Engineer",
+  "location": "Geylang, Singapore",
+  "url": "https://to.indeed.com/aabjrn8t2jy6",
+  "job_ref": "JOBSEARCH_100336",
+  "posted_date": "2026-09-11",
+  "experience_required": "",
+  "salary": "",
+  "source": "Indeed",
+  "description": "Lead the deployment, configuration, integration and optimization of complex enterprise network and security solutions. Technical lead for mid to large scale projects with architectural guidance across teams. Implement and support network security infrastructure on Cisco, Alcatel, Solarwinds, Cisco ISE, Cisco Firepower, Palo Alto, Checkpoint and Fortinet. Drive root-cause analysis, lead incident resolution, act as technical escalation for network performance, security events and critical connectivity issues. Prepare HLD, LLD, configuration baselines, acceptance test procedures and operational procedures. Run knowledge-sharing sessions and post-incident reviews. Support transition from project implementation to operations and maintenance."
+ },
+ {
+  "company": "Activate Interactive",
+  "title": "Infrastructure Engineer (Network and Endpoint)",
+  "location": "Singapore",
+  "url": "https://to.indeed.com/aafpl79x7qlv",
+  "job_ref": "JOBSEARCH_100334",
+  "posted_date": "2026-09-15",
+  "experience_required": "",
+  "salary": "",
+  "source": "Indeed",
+  "description": "12-month fixed-term contract on a Singapore government agency project. Manage the lifecycle of network infrastructure: planning, design, procurement, implementation and operations. Network SME in projects, vendor coordination, incident resolution, firmware updates under change management, IM8 compliance and audit. Also endpoint management (Microsoft Intune, ServiceNow). Minimum 5 years of experience in both desktop operations and network infrastructure operations, LAN, WAN, SDN, internet routing, security, server and LAN room setup. Knowledge of Microsoft endpoint suite and ITIL v3. Contract and vendor management."
+ },
+ {
+  "company": "Neutron",
+  "title": "Infrastructure Lead (Network & Systems)",
+  "location": "Bukit Merah, Singapore",
+  "url": "https://to.indeed.com/aarpdydwbxwv",
+  "job_ref": "JOBSEARCH_100330",
+  "posted_date": "2026-09-09",
+  "experience_required": "",
+  "salary": "",
+  "source": "Indeed",
+  "description": "Own the health, performance and evolution of a customer's network and systems estate under a managed services contract. Technical lead for major incidents, review and approve changes, own SLAs, maintain HLD/LLD, SOPs and diagrams. WAN and SD-WAN (Cisco Viptela/Meraki, VeloCloud, Fortinet, Aruba EdgeConnect), LAN switching (Cisco Catalyst/Nexus, Aruba, Juniper), firewalls (Palo Alto, Fortinet, Check Point, Cisco ASA/FTD), NAC (Cisco ISE, Aruba ClearPass), RADIUS/TACACS+, Infoblox, SolarWinds. Lead and mentor a team of L1-L3 engineers. 8-15 years of experience, 2-3 years as team lead. Degree in Computer Science, IT or Engineering. ITIL Foundation required. CCNP or CCIE, Fortinet NSE 4-7, PCNSE or Aruba ACMP preferred."
+ },
+ {
+  "company": "National Physical Laboratory",
+  "title": "Senior Network Engineer",
+  "location": "Teddington, UK",
+  "url": "https://to.indeed.com/aamjrcd84vys",
+  "job_ref": "JOBSEARCH_100348",
+  "posted_date": "2026-09-14",
+  "experience_required": "",
+  "salary": "",
+  "source": "Indeed",
+  "description": "Primary focus network engineering with secondary on-premises infrastructure support. Network protocols and topologies including OSPF, BGP, VRFs. Alcatel-Lucent Enterprise switching and OmniVista, or equivalent enterprise networking. Stateful and next-gen firewalls (NPL uses Fortinet) and IPSec VPN. Network security concepts such as NAC, 802.1x and segmentation, Forescout beneficial. VRRP, LACP, virtual chassis. Network management tools such as SolarWinds. SD-WAN and MPLS. Zero trust and micro-segmentation. IPv6. Wireless security WPA3, 802.1X. Beneficial: QoS, VMware vCenter, Active Directory, DNS, DHCP, Azure. Must obtain BPSS security clearance; nationality, residency and security requirements can apply."
+ },
+ {
+  "company": "Apple",
+  "title": "Senior Network Engineer, Backbone and Internet Edge",
+  "location": "Cork, Ireland",
+  "url": "https://to.indeed.com/aawyf98fpwhq",
+  "job_ref": "JOBSEARCH_100384",
+  "posted_date": "2026-10-01",
+  "experience_required": "",
+  "salary": "",
+  "source": "Indeed",
+  "description": "Global Network Services team supporting Apple's global backbone and internet peering. Lead and execute large-scale network projects from planning through deployment and handover: multi-site rollouts, data centre builds, peering and transit expansion. Carrier-grade platforms from Cisco, Juniper and Arista with BGP, IS-IS, MPLS and IPsec, LAN/WAN and DWDM optical transport. Build automation tooling in Python (Netmiko, NAPALM, Scrapli, REST APIs) with Ansible, Terraform or Jenkins and Git. Minimum 8+ years as a Network Engineer including 3+ years in a project engineering or lead role; fluent English; in-depth BGP, MPLS, IS-IS and TCP/IP; strong Python programming."
+ },
+ {
+  "company": "Analog Devices",
+  "title": "Sr. Network Engineer",
+  "location": "Chonburi, Thailand",
+  "url": "https://to.indeed.com/aamm8wklmtfm",
+  "job_ref": "JOBSEARCH_100436",
+  "posted_date": "2026-09-24",
+  "experience_required": "",
+  "salary": "",
+  "source": "Indeed",
+  "description": "Lead design, deployment, modernization and operational support of the global network across enterprise sites, engineering labs, manufacturing facilities and data centers. Technical leadership with Juniper networking, Aruba wireless, Palo Alto security and Fortinet or any SD-WAN. Juniper EX, QFX, MX, EVPN-VXLAN, ESI-LAG; Aruba wireless, controllers, ClearPass; Palo Alto NGFW and Panorama; Fortinet FortiGate, FortiManager and SD-WAN. Lead network modernization including SD-WAN, firewall transformation and wireless upgrades. Monitoring, incident response and root cause analysis. Required: 8+ years in enterprise network engineering and architecture; hands-on Juniper, Aruba, Palo Alto and Fortinet; BGP, OSPF, SD-WAN, VPN, QoS; large-scale global enterprise and manufacturing environments. Travel 10%."
+ },
+ {
+  "company": "AIS",
+  "title": "Senior Engineer (Internet Gateway & Infrastructure)",
+  "location": "Bangkok, Thailand",
+  "url": "https://to.indeed.com/aafjq44y2b64",
+  "job_ref": "JOBSEARCH_100431",
+  "posted_date": "2026-10-02",
+  "experience_required": "",
+  "salary": "",
+  "source": "Indeed",
+  "description": "Operate, maintain and improve core Internet Gateway infrastructure including IIG, NIX, CDN and DCI networks. Ensure network availability and service continuity for broadband and enterprise services. Support infrastructure platforms such as hypervisors, load balancers and network management systems. Develop automation tools. Support network transformation and migration projects. Bachelor's degree; 5+ years in network engineering, internet infrastructure or telecom; strong IP network, routing, switching, internet gateway, CDN, DCI or backbone knowledge; virtualization, network management systems and load balancers; automation and scripting (Python, Ansible, Shell). ISP, telecom or large enterprise experience preferred."
+ }
+]
