@@ -1,0 +1,62 @@
+[
+ {
+  "company": "isofy",
+  "title": "Senior Network Engineer",
+  "location": "Remote (Singapore hours), Singapore",
+  "url": "https://to.indeed.com/aa9z9c6pdvcv",
+  "job_ref": "JOBSEARCH_100546",
+  "posted_date": "2026-09-24",
+  "salary": "SGD 7,000 - 8,500 per month",
+  "experience_required": "",
+  "source": "Indeed",
+  "description": "Senior Network Engineer supporting the hardware layer of a network management platform. Remote, Monday to Friday 9am-5:30pm Singapore time, on-call rotation. Own network automation escalations for CoA, Radius and SNMP, wireless escalations, and network topology escalations including firewall policies, VLAN structures and port configuration. Design, implement and maintain routers, switches, firewalls and access points; monitor performance; firmware upgrades and patch management; incident response and root cause analysis; documentation. Requirements: bachelor's degree; TCP/IP, DNS, DHCP, VLANs, AAA, Radius, CoA; WLAN and RF configuration; Cisco, Juniper, Meraki, Watchguard; monitoring and troubleshooting tools. CCNA, CCNP certifications a plus."
+ },
+ {
+  "company": "PURVIEW ASIA PACIFIC",
+  "title": "Senior Network Engineer",
+  "location": "Singapore",
+  "url": "https://to.indeed.com/aav8mbw8vdvp",
+  "job_ref": "JOBSEARCH_100552",
+  "posted_date": "2026-09-29",
+  "salary": "",
+  "experience_required": "",
+  "source": "Indeed",
+  "description": "Contract. Administration, maintenance and support of enterprise network and security infrastructure. Administer HPE Aruba and HPE ToR switch environments; VLANs, trunking and switching; proactive monitoring and health checks; network upgrades. Administer and monitor Check Point firewalls: policies, ACLs, NAT and security rules; troubleshoot network and firewall incidents. Manage incidents, changes, service requests and root cause analyses; vulnerability assessments and CIS hardening; audit and compliance support; Ansible automation. Requires 4-6 years of network infrastructure experience, enterprise network and firewall environments, Aruba networking and Check Point."
+ },
+ {
+  "company": "KWE-APLL Technology Services",
+  "title": "Senior Network Engineer",
+  "location": "Bugis, Singapore",
+  "url": "https://to.indeed.com/aaxyvxk6ns86",
+  "job_ref": "JOBSEARCH_100555",
+  "posted_date": "2026-09-07",
+  "salary": "",
+  "experience_required": "",
+  "source": "Indeed",
+  "description": "Infrastructure Technology team: design, implementation and delivery of network infrastructure projects across the global enterprise. Lead implementation of LAN, WAN, SD-WAN, wireless, security, cloud connectivity and datacenter networking projects; migration, deployment, testing, rollback and cutover plans; configure routers, switches, firewalls, load balancers, wireless, VPNs and SD-WAN; network modernization including datacenter transformation, SASE adoption and SD-WAN; proof-of-concepts; documentation and handover; level 3 escalation. Requires 7 years of hands-on network engineering with implementation and transformation projects; Cisco Nexus, Catalyst, routing and switching, Cisco or Meraki wireless; BGP, OSPF, EIGRP; SD-WAN deployment; firewalls, VPNs, SASE, NAC and secure remote access; ITIL change, incident and service transition. CCNA, CCNP Enterprise, CCNP Security, Meraki, Fortinet, Palo Alto or SD-WAN certifications regarded."
+ },
+ {
+  "company": "GPro Network Solutions",
+  "title": "Senior Network & Data Center Engineer (Contract)",
+  "location": "Huddersfield, UK",
+  "url": "https://to.indeed.com/aazqhmsgwn6j",
+  "job_ref": "JOBSEARCH_100561",
+  "posted_date": "2026-09-17",
+  "salary": "",
+  "experience_required": "",
+  "source": "Indeed",
+  "description": "Temporary contract. Lead design, implementation and maintenance of complex network infrastructure and data center environments. Design and deploy LAN, WAN, data center networks (Cisco Nexus vPC/VXLAN) and hybrid cloud integration with Azure and AWS. Manage Cisco routers (ISR 4000, ASR), switches, firewalls (Cisco ASA failover, Palo Alto, FortiGate), Juniper devices and SDN. Implement VPNs (IPsec, SSL), Cisco ISE, PKI certificate management, IDS/IPS and network access controls. Monitor with SolarWinds, PRTG and CA Spectrum. BGP, OSPF, EIGRP, MPLS, DNS, DHCP and Active Directory authentication. VMware vSphere and SAN storage. Scripting in Bash, Python or PowerShell. CCNP Enterprise, Data Center or Security desirable; ITIL advantageous. Work authorisation: United Kingdom (preferred)."
+ },
+ {
+  "company": "PERSOL (bank client)",
+  "title": "Infrastructure Engineer (Network)",
+  "location": "Singapore",
+  "url": "https://to.indeed.com/aarfx2rkyhdf",
+  "job_ref": "JOBSEARCH_100549",
+  "posted_date": "2026-09-29",
+  "salary": "",
+  "experience_required": "",
+  "source": "Indeed",
+  "description": "Senior network technical role at a bank client: manage daily network activity, implement changes, handle incident escalations from L1/L2, work with network vendors' support teams, handle critical network incidents under pressure, guide junior team members, extended hours when production problems occur. Requires bachelor's degree and 10+ years of network operations experience; CCIE preferred. TCP/IP, BGP, MPLS, MP-BGP, EVPN; routing, switching, LAN/WAN, spanning tree, HSRP, VLAN, OSPF, VxLAN, Cisco ACI, SDA and SD-WAN; advanced hands-on troubleshooting of routers and switches."
+ }
+]
