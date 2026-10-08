@@ -1,0 +1,38 @@
+[
+ {
+  "company": "OpenAI",
+  "title": "Network Engineer",
+  "location": "San Francisco, CA, USA (hybrid, 3 days in office)",
+  "url": "https://openai.com/careers/network-engineer-san-francisco/",
+  "job_ref": "ashby-9f78c41f-8d39-46c9-b9c3-c3b075905b24",
+  "posted_date": "",
+  "salary": "USD 347,000 - 510,000 per year plus equity",
+  "experience_required": "",
+  "source": "OpenAI careers",
+  "description": "Network Engineering team within IT and Security. Design, run and improve enterprise networks across offices, labs, cloud and PoPs; set long-term network strategy, lead migrations and site launches; on-call, incidents and escalations; reduce recurring failures with automation and Infrastructure-as-Code; build monitoring and dashboards; least-privilege and Zero Trust access controls. Requirements: hands-on enterprise platforms such as Cisco, Meraki, Palo Alto or Arista; strong BGP, OSPF, VLAN/VRF; production troubleshooting and network observability; security fundamentals including firewalls, VPN, 802.1X/NAC and segmentation; scripting or automation with Python, Terraform or Ansible; enterprise wireless; cloud or hybrid connectivity. Preferred: multi-quarter roadmap experience, carrier and optical transport, cloud WAN, data center or PoP architecture. Relocation assistance offered to new employees. Visa sponsorship not mentioned."
+ },
+ {
+  "company": "OpenAI",
+  "title": "Network Engineer (Network Security)",
+  "location": "London, UK (hybrid, 3 days in office)",
+  "url": "https://openai.com/careers/network-engineer-london-uk/",
+  "job_ref": "ashby-a80e213f-c592-4337-a410-e5bf94f4e40d",
+  "posted_date": "",
+  "salary": "",
+  "experience_required": "",
+  "source": "OpenAI careers",
+  "description": "Network Security team within Security, hired by OpenAI UK Ltd. Design, operate, troubleshoot and automate secure networks across offices, labs, cloud connectivity and production services. End-to-end ownership of secure enterprise routing, switching, wireless, WAN, network services and cloud connectivity. Balance long-term platform work (architecture, standards, lifecycle planning) with operations (incidents, escalations, break/fix). Use software, APIs, infrastructure-as-code and CI/CD to reduce repetitive reactive work. Relocation assistance offered to new employees. Visa sponsorship not mentioned."
+ },
+ {
+  "company": "OpenAI",
+  "title": "Network Operations Engineer, AI Networking",
+  "location": "San Francisco, CA, USA",
+  "url": "https://openai.com/careers/network-operations-engineer-ai-networking-san-francisco/",
+  "job_ref": "ashby-bbad4315-1f13-4b2f-b595-cf1287274f2f",
+  "posted_date": "",
+  "salary": "USD 157,000 - 302,000 per year plus equity",
+  "experience_required": "5+ years",
+  "source": "OpenAI careers",
+  "description": "Infrastructure Operations, Datacenter Design. Operate and improve large-scale Ethernet fabrics supporting GPU clusters, storage and management infrastructure. Production incident response and root cause analysis, changes and maintenance windows, hardware lifecycle and vendor coordination, new cluster deployments, monitoring and runbooks, automation. 24x7 on-call rotation; up to 30% travel to data center sites. Requirements: bachelor's degree or equivalent; 5+ years operating large-scale data center, cloud, AI or HPC network infrastructure; hands-on Cisco NX-OS, Arista EOS, NVIDIA Cumulus/Spectrum or Juniper JunOS; strong Layer 2/3 including BGP, OSPF, MLAG, VXLAN fabric design; optics and cabling troubleshooting; change management. Preferred: AI/HPC networking, RoCE v2 and lossless Ethernet, GPU platforms, telemetry tools (Prometheus, Grafana, gNMI), Python automation. Relocation support for eligible employees. Visa sponsorship not mentioned."
+ }
+]
