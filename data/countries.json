@@ -1,5 +1,5 @@
 {
- "checked": "2026-10-07",
+ "checked": "2026-10-09",
  "note": "Openings seen on Indeed searches and verified by reading each posting. 'sponsorship' is only what the posting itself says: yes / no / not stated. Nothing here has been applied to.",
  "openings": [
   {
@@ -223,5 +223,41 @@
   "Germany": "Only Berlin cloud/SRE roles surfaced (e.g. AWS/Kubernetes principal engineer). No enterprise network or network-security posting that fits.",
   "Netherlands": "Only a Dutch-language security engineer role at a nuclear-research site (Dutch, VOG/VGB screening) and junior network roles. None suitable.",
   "China": "Only a Shanghai OT/embedded-device cyber-security testing role posted in Chinese. Not a fit; employer sponsorship rules differ and are best checked directly."
+ },
+ "sponsor_leads": {
+  "United States": {
+   "source": "https://www.myvisajobs.com/reports/h1b/job-title/network-engineer/",
+   "note": "Employers that filed H-1B petitions for 'network engineer' titles in FY2025 (MyVisaJobs, from US Department of Labor data). This shows who has sponsored before, not who is hiring now. Look for current roles on each employer's own careers page, and ask about sponsorship. H-1B also depends on the annual lottery.",
+   "employers": [
+    {
+     "name": "Google",
+     "detail": "31 filings, average salary about $158k"
+    },
+    {
+     "name": "Meta Platforms",
+     "detail": "6 filings, average about $230k"
+    },
+    {
+     "name": "Netflix",
+     "detail": "2 filings, average about $222k"
+    },
+    {
+     "name": "Tech Mahindra (Americas)",
+     "detail": "24 filings, average about $107k"
+    },
+    {
+     "name": "Presidio Networked Solutions",
+     "detail": "4 filings under 'senior engineer', average about $142k"
+    },
+    {
+     "name": "Onix Networking",
+     "detail": "2 filings under 'senior engineer', average about $108k"
+    },
+    {
+     "name": "Cloudflare, Nvidia, Nokia of America",
+     "detail": "appear on the network-engineer sponsor list"
+    }
+   ]
+  }
  }
 }

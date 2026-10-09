@@ -84,7 +84,13 @@ def _opening(o, row=None, kit_url: str = "") -> str:
             + "</div>")
 
 
-def country_page(c: dict, openings: list, none_msg: str, tracker_rows: list, kit_url: str, checked: str) -> str:
+def _leads(lead: dict) -> str:
+    items = "".join(f"<li><b>{html.escape(e['name'])}</b>: {html.escape(e['detail'])}</li>" for e in lead["employers"])
+    return (f"<h2>Employers that have sponsored</h2><div class='card'><div>{html.escape(lead['note'])}</div><ul>{items}</ul>"
+            f"<p class='hint'><a href='{html.escape(lead['source'])}' rel='noopener'>Source: MyVisaJobs</a></p></div>")
+
+
+def country_page(c: dict, openings: list, none_msg: str, tracker_rows: list, kit_url: str, checked: str, lead: dict | None = None) -> str:
     by_url = {r["url"]: r for r in tracker_rows}
     seen = {o["url"] for o in openings}
     tracker_rows = [r for r in tracker_rows if r["url"] not in seen]  # matched ones show on their opening card
@@ -105,6 +111,8 @@ def country_page(c: dict, openings: list, none_msg: str, tracker_rows: list, kit
         sec += f"<h2>Openings seen (checked {html.escape(checked)})</h2>" + "".join(_opening(o, by_url.get(o["url"]), kit_url) for o in sorted(openings, key=lambda o: order[o["fit"]]))
     if not tracker_rows and not openings:
         sec += f"<h2>Openings</h2><div class='card'>{html.escape(none_msg or 'No suitable openings found yet.')}</div>"
+    if lead:
+        sec += _leads(lead)
     links = "".join(f"<li><a href='{html.escape(u)}' rel='noopener'>{html.escape(t)}</a></li>" for t, u in c["links"])
     return ("<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'>"
             f"<meta name=robots content='noindex,nofollow'><title>{html.escape(c['name'])} Jobs</title>{CSS}"
@@ -128,6 +136,7 @@ def build_site(rows: list, outdir: Path, kit_url: str = "", openings_path: Path 
         ops = [o for o in data["openings"] if BY_NAME.get(o["country"], {}).get("slug") == c["slug"]]
         trk = [r for r in rows if country_of(r["location"]) == c["slug"]]
         p = outdir / "countries" / f"{c['slug']}.html"
-        p.write_text(country_page(c, ops, data.get("none_found", {}).get(c["name"], ""), trk, kit_url, data.get("checked", "")), encoding="utf-8")
+        p.write_text(country_page(c, ops, data.get("none_found", {}).get(c["name"], ""), trk, kit_url, data.get("checked", ""),
+                                  data.get("sponsor_leads", {}).get(c["name"])), encoding="utf-8")
         written.append(p)
     return written
