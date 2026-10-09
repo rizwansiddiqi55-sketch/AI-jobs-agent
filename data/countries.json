@@ -217,6 +217,42 @@
    "sponsorship": "not stated",
    "fit": "partial",
    "note": "Cisco Nexus/ISE, Palo Alto, FortiGate, SD and VMware; asks for UK work authorisation (preferred). Contract, so Skilled Worker sponsorship is unlikely."
+  },
+  {
+   "country": "USA",
+   "title": "Network Engineer",
+   "company": "OpenAI",
+   "location": "San Francisco, CA (hybrid)",
+   "posted": "not dated",
+   "type": "Full-time",
+   "url": "https://openai.com/careers/network-engineer-san-francisco/",
+   "sponsorship": "not stated",
+   "fit": "partial",
+   "note": "Employer's own careers page. Cisco/Meraki/Palo Alto, BGP/OSPF, 802.1X/NAC, Python/Terraform automation. Relocation assistance offered; visa sponsorship not mentioned, so ask."
+  },
+  {
+   "country": "USA",
+   "title": "Network Operations Engineer, AI Networking",
+   "company": "OpenAI",
+   "location": "San Francisco, CA",
+   "posted": "not dated",
+   "type": "Full-time",
+   "url": "https://openai.com/careers/network-operations-engineer-ai-networking-san-francisco/",
+   "sponsorship": "not stated",
+   "fit": "partial",
+   "note": "Data-center Ethernet fabrics for GPU clusters (NX-OS, Arista, Cumulus, VXLAN), 24x7 on-call. Different from your enterprise background. Sponsorship not mentioned."
+  },
+  {
+   "country": "UK",
+   "title": "Network Engineer (Network Security)",
+   "company": "OpenAI",
+   "location": "London (hybrid)",
+   "posted": "not dated",
+   "type": "Full-time",
+   "url": "https://openai.com/careers/network-engineer-london-uk/",
+   "sponsorship": "not stated",
+   "fit": "strong",
+   "note": "Employer's own careers page; hired by OpenAI UK Ltd. Secure enterprise routing, switching, wireless, WAN and cloud connectivity. Relocation assistance offered; sponsorship not mentioned, so ask."
   }
  ],
  "none_found": {
