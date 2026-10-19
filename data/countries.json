@@ -1,5 +1,5 @@
 {
- "checked": "2026-10-09",
+ "checked": "2026-10-19",
  "note": "Openings seen on Indeed searches and verified by reading each posting. 'sponsorship' is only what the posting itself says: yes / no / not stated. Nothing here has been applied to.",
  "openings": [
   {
@@ -253,6 +253,54 @@
    "sponsorship": "not stated",
    "fit": "strong",
    "note": "Employer's own careers page; hired by OpenAI UK Ltd. Secure enterprise routing, switching, wireless, WAN and cloud connectivity. Relocation assistance offered; sponsorship not mentioned, so ask."
+  },
+  {
+   "country": "Singapore",
+   "title": "Senior Network Security Engineer",
+   "company": "NTT Singapore",
+   "location": "Toa Payoh",
+   "posted": "2026-10-08",
+   "type": "Full-time",
+   "url": "https://to.indeed.com/aa7k6djqwymj",
+   "sponsorship": "not stated",
+   "fit": "partial",
+   "note": "8-14 years; Mandatory Cisco ACI Multi Pod, F5 and Check Point plus Palo Alto. Your Palo Alto/CCNP match, ACI/F5/Check Point need checking. Same JD posted by Innovatiq and Exceltech (agencies)."
+  },
+  {
+   "country": "Singapore",
+   "title": "Senior Network Engineer, Lead / Technical Level",
+   "company": "Career Connex (recruiter)",
+   "location": "Singapore",
+   "posted": "2026-10-07",
+   "type": "Permanent",
+   "url": "https://to.indeed.com/aavyqqjffrg6",
+   "sponsorship": "not stated",
+   "fit": "partial",
+   "note": "CCNP is a must (you hold it). Wants 3 years in technical sales support; the description is partly boilerplate."
+  },
+  {
+   "country": "UK",
+   "title": "Senior Network Engineer",
+   "company": "TGR Haas F1 Team",
+   "location": "Banbury",
+   "posted": "2026-10-13",
+   "type": "Full-time",
+   "url": "https://to.indeed.com/aac6bl4dcd2b",
+   "sponsorship": "not stated",
+   "fit": "partial",
+   "note": "Strong skills fit (SD-WAN, ZTNA/SASE, NAC, firewalls). Needs National Security Vetting, normally 5 years of UK residence, so ask whether you could qualify."
+  },
+  {
+   "country": "UK",
+   "title": "Senior Network Engineer",
+   "company": "Home Office",
+   "location": "Salford",
+   "posted": "2026-10-12",
+   "type": "Permanent",
+   "url": "https://to.indeed.com/aaxhrxrw9mkc",
+   "sponsorship": "no",
+   "fit": "blocked",
+   "note": "States it cannot sponsor Skilled Worker visas, and needs SC and NPPV3 security clearance with UK residency."
   }
  ],
  "none_found": {

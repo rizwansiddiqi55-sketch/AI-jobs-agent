@@ -1,0 +1,62 @@
+[
+ {
+  "company": "CNS Middle East",
+  "title": "Senior Network and Security Engineer",
+  "location": "Dubai, UAE",
+  "url": "https://to.indeed.com/aa4lb4gzl7zy",
+  "job_ref": "JOBSEARCH_100612",
+  "posted_date": "2026-10-13",
+  "experience_required": "10+ years",
+  "salary": "",
+  "source": "Indeed",
+  "description": "Design, deploy and hand over enterprise security and data-centre projects for CNS customers across the UAE. Hands-on: leads implementations end to end - Next-Gen Firewalls, Zero Trust, NAC, F5 application delivery and Cisco ACI - and acts as technical escalation point for the team. Produce HLD and LLD documents; design segmentation, firewall policy, Zero Trust access and NAC policy models; lead deployments and firewall and load-balancer migrations; integrate security platforms with AD/LDAP, RADIUS/TACACS+, PKI, SIEM and SOAR; UAT plans and as-built documentation; L3 escalation for network and security incidents and root-cause analysis; preventive maintenance, firmware upgrades and vulnerability remediation; support pre-sales with sizing, BoQ review, SOW and RFP responses. Requirements: bachelor's degree in Computer Science, Telecom Engineering or IT; at least one of CCNP Security, CCNP Enterprise / Data Center, PCNSE, Fortinet NSE 7 / FCSS, F5 certified; minimum 10 years in enterprise networking including 5+ years delivering network security projects. Skills: Palo Alto, FortiGate, Cisco FTD/FMC next-gen firewalls with HA, policy migration, IPS and VPN; Fortinet Security Fabric FortiManager FortiAnalyzer; Zero Trust, ZTNA, SASE with Entra ID and Okta; NAC with Cisco ISE, Aruba ClearPass, FortiNAC, 802.1X, TrustSec; F5 BIG-IP; Cisco ACI and Nexus 9000; VLANs, STP, LACP, vPC, BGP, OSPF, EIGRP, VRF, VXLAN EVPN; Fortinet SD-WAN. Desired: CCIE, system integrator or managed-services experience in the UAE/GCC, Python and Ansible automation, valid UAE driving licence. Same posting also listed for Abu Dhabi."
+ },
+ {
+  "company": "InterSystems Corporation",
+  "title": "Network Engineer (Hosting Services)",
+  "location": "Dubai, UAE",
+  "url": "https://to.indeed.com/aa9zzxcnxtqd",
+  "job_ref": "JOBSEARCH_100600",
+  "posted_date": "2026-10-05",
+  "experience_required": "",
+  "salary": "",
+  "source": "Indeed",
+  "description": "Network Engineer in the Hosting Services team overseeing delivery, administration and security compliance of the network infrastructure underpinning hosted services internationally. Support data-centre network infrastructure; monitor service levels; work with architects and project managers to select and build network solutions; disaster recovery and failover plans; 24x7 monitoring and support as part of the hosting operations team; documentation and automation opportunities. Requires minimum CCNP routing and switching or security; hands-on Cisco and F5 equipment in a datacentre: Cisco Nexus 7000/9000 NX-OS, vPC, HSRP; Cisco ASR, BGP, OSPF, VRF; Cisco ASA, IPS, IPsec VPN, AnyConnect, NAT, ACLs; F5 LTM and GTM. Strong ITIL experience in a 24x7 operations environment with tight SLAs. Desirable: Nagios, Cacti, Puppet, managing third-party vendors."
+ },
+ {
+  "company": "NTT Singapore",
+  "title": "Senior Network Security Engineer",
+  "location": "Toa Payoh, Singapore",
+  "url": "https://to.indeed.com/aa7k6djqwymj",
+  "job_ref": "JOBSEARCH_100638",
+  "posted_date": "2026-10-08",
+  "experience_required": "8-14 years",
+  "salary": "",
+  "source": "Indeed",
+  "description": "Senior Network & Security Engineer in Network Operations and Engineering supporting datacenter, campus, remote offices and public cloud network. Technical hands-on role: lead network deployment projects, work with vendors on solution architecture, Tier-3 support for network and security issues with rotating on-call including weekends, create and review HLD, LLD and operational practices, drive operations efficiency through automation, AIOps and MCP tooling desirable. Bachelor's degree and 8-14 years of experience in core network technologies including Cisco ACI, Checkpoint and Palo Alto firewalls, F5 load balancer and WAF. Certifications: one or more of CCIE, CCNP, PCNSE, CCSE, AWS Advanced Networking. Mandatory: Cisco ACI Multi Pod / Multi Site, F5 load balancers and WAF, Checkpoint and Palo Alto firewalls and IPS. Good to have: Infoblox, Illumio and Guardicore micro-segmentation, SolarWinds, Wireshark, Ansible and Terraform, NAC ISE and Algosec. The same job description is also posted by Innovatiq Technologies (Tanjong Pagar) and Exceltech Computers (contract, near Raffles Place)."
+ },
+ {
+  "company": "CAREER CONNEX",
+  "title": "Senior Network Engineer, Lead / Technical Level",
+  "location": "Singapore",
+  "url": "https://to.indeed.com/aavyqqjffrg6",
+  "job_ref": "JOBSEARCH_100644",
+  "posted_date": "2026-10-07",
+  "experience_required": "3 years",
+  "salary": "",
+  "source": "Indeed",
+  "description": "Recruiter posting for a Singapore-based systems integration client serving private and government sectors. Daily operations of managed network equipment, WAN and LAN health checks; plan and execute technical activities and provide guidance; change management; coordinate with WAN circuit providers; network equipment setup, deployment and commissioning; troubleshooting; assess impact of network upgrades; firmware and patch upgrades; structured cabling; network management tools. Requirements: degree with 3 years in technical sales support in a network environment and project implementation experience; CCNP certified a must, CCIE an advantage; security solutions Cisco ASA, FTD, Palo Alto, Checkpoint, Juniper, McAfee IDS/IPS, F5; BGP, OSPF, EIGRP, QoS; switching VSS, VDC, vPC, FEX; firewall virtual context, NAT, IPsec and SSL VPN; MPLS, SD-WAN, ACI, NSX; load balancers; VoIP CUCM."
+ },
+ {
+  "company": "TGR Haas F1 Team",
+  "title": "Senior Network Engineer",
+  "location": "Banbury, UK",
+  "url": "https://to.indeed.com/aac6bl4dcd2b",
+  "job_ref": "JOBSEARCH_100626",
+  "posted_date": "2026-10-13",
+  "experience_required": "7+ years",
+  "salary": "",
+  "source": "Indeed",
+  "description": "Technical owner of the team's global networking estate: availability, performance, security and continuous improvement; design authority and senior escalation point for networking; modernisation towards software-defined and automated networking. Own design, implementation and lifecycle of enterprise networking across on-premises, cloud and trackside environments including LAN, WAN, SD-WAN, wireless and secure remote connectivity; maintain and secure routing, switching, firewalls, VPN, load balancing and network access control; secure-by-design; 3rd line support and root cause analysis; standards and documentation; automation and infrastructure-as-code; mentor junior engineers. Over 7 years of IT experience including at least 3 years in networking. Essential: enterprise networks, routing, switching, wireless and segmentation; enterprise firewalls, SD-WAN, ZTNA and SASE; zero-trust, network access control, micro-segmentation; DNS, DHCP, BGP, OSPF, VLANs, QoS, multicast and 802.1X; monitoring and fault diagnosis. Desirable: Azure and cloud networking, observability, Ansible, Terraform or Python. Flexible hours including weekends and occasional international travel. All employees must be security cleared to National Security Vetting standards; normally 5 consecutive years of UK residence."
+ }
+]
